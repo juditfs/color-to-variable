@@ -1,0 +1,15 @@
+{
+  "name": "color-to-variable",
+  "version": "1.0.0",
+  "description": "Figma plugin to convert colors to variables",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "watch": "tsc -p tsconfig.json -w"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.68.0",
+    "typescript": "^5.0.0"
+  }
+}

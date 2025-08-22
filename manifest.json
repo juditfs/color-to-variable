@@ -1,0 +1,10 @@
+{
+  "name": "Color to Variable",
+  "id": "color-to-variable",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "src/ui.html",
+  "editorType": [
+    "figma"
+  ]
+}

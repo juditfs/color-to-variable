@@ -8,6 +8,12 @@
       padding: 20px;
     }
 
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
     button {
       border-radius: 6px;
       padding: 8px 16px;
@@ -22,14 +28,50 @@
       background: #0D8EE9;
     }
 
+    select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #E5E5E5;
+    }
+
   </style>
 </head>
 
 <body>
-  <button id="create">Create Variable</button>
+  <div class="container">
+    <select id="collection">
+      <option value="new">Create new collection</option>
+    </select>
+    <button id="create">Create Variable</button>
+  </div>
   <script>
+    // Initialize by requesting collections
+    parent.postMessage({ pluginMessage: { type: 'get-collections' } }, '*');
+
+    // Handle collections data
+    window.onmessage = (event) => {
+      const msg = event.data.pluginMessage;
+      if (msg.type === 'update-collections') {
+        const select = document.getElementById('collection');
+        select.innerHTML = '<option value="new">Create new collection</option>';
+        msg.collections.forEach(collection => {
+          const option = document.createElement('option');
+          option.value = collection.id;
+          option.textContent = collection.name;
+          select.appendChild(option);
+        });
+      }
+    };
+
     document.getElementById('create').onclick = () => {
-      parent.postMessage({ pluginMessage: { type: 'create-variable' } }, '*');
+      const collectionId = document.getElementById('collection').value;
+      parent.postMessage({
+        pluginMessage: {
+          type: 'create-variable',
+          collectionId
+        }
+      }, '*');
     };
   </script>
 </body>

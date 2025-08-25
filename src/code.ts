@@ -1,34 +1,50 @@
 /// <reference types="@figma/plugin-typings" />
 
 interface PluginMessage {
-  type: 'create-variable';
+  type: 'create-variable' | 'get-collections';
+  collectionId?: string;
 }
 
 let counter = 1;
 
-figma.showUI(__html__, { width: 240, height: 100 });
+figma.showUI(__html__, { width: 240, height: 120 });
+
+// Helper function to find parent group
+function getAncestors(node: BaseNode): BaseNode[] {
+  const ancestors: BaseNode[] = [];
+  let parent = node.parent;
+  while (parent) {
+    ancestors.push(parent);
+    parent = parent.parent;
+  }
+  return ancestors;
+}
 
 figma.ui.onmessage = async (msg: PluginMessage) => {
+  if (msg.type === 'get-collections') {
+    const collections = await figma.variables.getLocalVariableCollections();
+    figma.ui.postMessage({
+      type: 'update-collections',
+      collections: collections.map(c => ({ id: c.id, name: c.name }))
+    });
+  }
+
   if (msg.type === 'create-variable') {
     const selection = figma.currentPage.selection;
 
     if (selection.length === 0) {
-      figma.notify('Please select layers with fill and optionally a text layer');
+      figma.notify('Please select layers with fill and optionally text layers');
       return;
     }
 
-    // Find filled layers and text layer in the selection
+    // Find filled layers and text layers in the selection
     const filledNodes: (SceneNode & { fills: readonly Paint[] })[] = [];
-    let textNode: TextNode | null = null;
+    const textNodes: TextNode[] = [];
 
     for (const node of selection) {
-      // First check if it's a text node
       if (node.type === 'TEXT') {
-        textNode = node as TextNode;
-        continue; // Skip text nodes for fill color
-      }
-      // Then look for fills in non-text nodes
-      if ('fills' in node && Array.isArray(node.fills) && node.fills.length > 0 && node.fills[0].type === 'SOLID') {
+        textNodes.push(node);
+      } else if ('fills' in node && Array.isArray(node.fills) && node.fills.length > 0 && node.fills[0].type === 'SOLID') {
         filledNodes.push(node as SceneNode & { fills: readonly Paint[] });
       }
     }
@@ -38,28 +54,44 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       return;
     }
 
-    // Get or create collection
-    const collections = await figma.variables.getLocalVariableCollections();
+    // Get or create collection based on selection
     let targetCollection;
-
-    if (collections.length === 0) {
+    if (msg.collectionId === 'new') {
       targetCollection = await figma.variables.createVariableCollection("Colors");
     } else {
-      targetCollection = collections[0];
+      const collections = await figma.variables.getLocalVariableCollections();
+      targetCollection = collections.find(c => c.id === msg.collectionId);
+      if (!targetCollection) {
+        targetCollection = await figma.variables.createVariableCollection("Colors");
+      }
     }
 
     // Process each filled node
     for (const filledNode of filledNodes) {
       const fill = filledNode.fills[0] as SolidPaint;
-
-      // Determine variable name
       let variableName = '';
-      if (textNode) {
-        variableName = textNode.characters;
-        if (filledNodes.length > 1) {
-          variableName += counter++;
-        }
+
+      // Get all ancestor groups of the filled node
+      const filledNodeAncestors = getAncestors(filledNode);
+
+      // Try to find a text node that shares any ancestor with the filled node
+      const matchingTextNode = textNodes.find(textNode => {
+        const textNodeAncestors = getAncestors(textNode);
+        return textNodeAncestors.some(ancestor =>
+          filledNodeAncestors.some(fillAncestor => fillAncestor.id === ancestor.id)
+        );
+      });
+
+      if (matchingTextNode) {
+        // Use the matching text node's content
+        variableName = matchingTextNode.characters;
+        // Remove this text node from available text nodes to avoid reusing it
+        textNodes.splice(textNodes.indexOf(matchingTextNode), 1);
+      } else if (textNodes.length > 0) {
+        // If no matching text node but there are text nodes available, use the first one
+        variableName = `${textNodes[0].characters}${counter++}`;
       } else {
+        // No text nodes available, use default naming
         variableName = `color${counter++}`;
       }
 

@@ -53,16 +53,54 @@
     window.onmessage = (event) => {
       const msg = event.data.pluginMessage;
       if (msg.type === 'update-collections') {
-        const select = document.getElementById('collection');
-        select.innerHTML = '<option value="new">Create new collection</option>';
-        msg.collections.forEach(collection => {
-          const option = document.createElement('option');
-          option.value = collection.id;
-          option.textContent = collection.name;
-          select.appendChild(option);
-        });
+        updateCollectionsDropdown(msg.collections);
+      } else if (msg.type === 'collection-created') {
+        // Add the newly created collection to the dropdown and select it
+        addNewCollectionToDropdown(msg.collection);
       }
     };
+
+    function updateCollectionsDropdown(collections) {
+      const select = document.getElementById('collection');
+      select.innerHTML = '';
+      
+      // Add existing collections first
+      collections.forEach(collection => {
+        const option = document.createElement('option');
+        option.value = collection.id;
+        option.textContent = collection.name;
+        select.appendChild(option);
+      });
+      
+      // Add "Create new collection" option at the end
+      const newOption = document.createElement('option');
+      newOption.value = 'new';
+      newOption.textContent = 'Create new collection';
+      select.appendChild(newOption);
+    }
+
+    function addNewCollectionToDropdown(newCollection) {
+      const select = document.getElementById('collection');
+      
+      // Remove the "Create new collection" option temporarily
+      const createNewOption = select.querySelector('option[value="new"]');
+      if (createNewOption) {
+        createNewOption.remove();
+      }
+      
+      // Add the new collection
+      const option = document.createElement('option');
+      option.value = newCollection.id;
+      option.textContent = newCollection.name;
+      option.selected = true; // Select the newly created collection
+      select.appendChild(option);
+      
+      // Re-add "Create new collection" option at the end
+      const newOption = document.createElement('option');
+      newOption.value = 'new';
+      newOption.textContent = 'Create new collection';
+      select.appendChild(newOption);
+    }
 
     document.getElementById('create').onclick = () => {
       const collectionId = document.getElementById('collection').value;

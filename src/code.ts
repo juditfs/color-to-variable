@@ -59,13 +59,16 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
 
     // Get or create collection based on selection
     let targetCollection;
+    let isNewCollection = false;
     if (msg.collectionId === 'new') {
       targetCollection = await figma.variables.createVariableCollection("Colors");
+      isNewCollection = true;
     } else {
       const collections = await figma.variables.getLocalVariableCollections();
       targetCollection = collections.find(c => c.id === msg.collectionId);
       if (!targetCollection) {
         targetCollection = await figma.variables.createVariableCollection("Colors");
+        isNewCollection = true;
       }
     }
 
@@ -124,6 +127,14 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       figma.notify(`Created 1 variable: ${createdVariables[0]}`);
     } else {
       figma.notify(`Created ${count} variables`);
+    }
+
+    // If a new collection was created, notify the UI after variables are created
+    if (isNewCollection) {
+      figma.ui.postMessage({
+        type: 'collection-created',
+        collection: { id: targetCollection.id, name: targetCollection.name }
+      });
     }
   }
 };

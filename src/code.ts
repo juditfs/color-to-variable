@@ -37,6 +37,9 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       return;
     }
 
+    // Show working message
+    figma.notify('Working...');
+
     // Find filled layers and text layers in the selection
     const filledNodes: (SceneNode & { fills: readonly Paint[] })[] = [];
     const textNodes: TextNode[] = [];
@@ -65,6 +68,9 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         targetCollection = await figma.variables.createVariableCollection("Colors");
       }
     }
+
+    // Keep track of created variables
+    const createdVariables: string[] = [];
 
     // Process each filled node
     for (const filledNode of filledNodes) {
@@ -108,7 +114,16 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         a: fill.opacity || 1
       });
 
-      figma.notify(`Created variable: ${variableName}`);
+      // Add to created variables list instead of showing individual message
+      createdVariables.push(variableName);
+    }
+
+    // Show completion message with count
+    const count = createdVariables.length;
+    if (count === 1) {
+      figma.notify(`Created 1 variable: ${createdVariables[0]}`);
+    } else {
+      figma.notify(`Created ${count} variables`);
     }
   }
 };

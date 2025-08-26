@@ -291,6 +291,14 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
     // Keep track of created variables and used names
     const createdVariables: string[] = [];
     const usedNames = new Set<string>();
+    
+    // Get existing variable names in the collection to avoid duplicates
+    const existingVariables = await figma.variables.getLocalVariables();
+    for (const variable of existingVariables) {
+      if (variable.variableCollectionId === targetCollection.id) {
+        usedNames.add(variable.name); // Add existing names to our tracking set
+      }
+    }
 
     // Process each filled node
     for (const filledNode of filledNodes) {
@@ -310,12 +318,26 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
 
       if (matchingTextNode) {
         // Use the matching text node's content
-        variableName = matchingTextNode.characters;
+        let baseName = matchingTextNode.characters;
+        let finalName = baseName;
+        let duplicateCounter = 1;
+        while (usedNames.has(finalName)) {
+          finalName = `${baseName}-${duplicateCounter}`;
+          duplicateCounter++;
+        }
+        variableName = finalName;
         // Remove this text node from available text nodes to avoid reusing it
         textNodes.splice(textNodes.indexOf(matchingTextNode), 1);
       } else if (textNodes.length > 0) {
         // If no matching text node but there are text nodes available, use the first one
-        variableName = `${textNodes[0].characters}${counter++}`;
+        let baseName = `${textNodes[0].characters}${counter++}`;
+        let finalName = baseName;
+        let duplicateCounter = 1;
+        while (usedNames.has(finalName)) {
+          finalName = `${baseName}-${duplicateCounter}`;
+          duplicateCounter++;
+        }
+        variableName = finalName;
       } else {
         // No text nodes available, use color-based naming with brightness
         const colorName = findNearestColor(fill.color.r, fill.color.g, fill.color.b);

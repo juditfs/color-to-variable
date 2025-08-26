@@ -3,11 +3,13 @@
 interface PluginMessage {
   type: 'create-variable' | 'get-collections';
   collectionId?: string;
+  namingMode?: 'auto' | 'manual';
+  customName?: string;
 }
 
 let counter = 1;
 
-figma.showUI(__html__, { width: 240, height: 120 });
+figma.showUI(__html__, { width: 240, height: 180 });
 
 // CSS color palette with W3Schools color group mappings
 const cssColors = [
@@ -316,21 +318,10 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         );
       });
 
-      if (matchingTextNode) {
-        // Use the matching text node's content
-        let baseName = matchingTextNode.characters;
-        let finalName = baseName;
-        let duplicateCounter = 1;
-        while (usedNames.has(finalName)) {
-          finalName = `${baseName}-${duplicateCounter}`;
-          duplicateCounter++;
-        }
-        variableName = finalName;
-        // Remove this text node from available text nodes to avoid reusing it
-        textNodes.splice(textNodes.indexOf(matchingTextNode), 1);
-      } else if (textNodes.length > 0) {
-        // If no matching text node but there are text nodes available, use the first one
-        let baseName = `${textNodes[0].characters}${counter++}`;
+      // Handle naming based on mode
+      if (msg.namingMode === 'manual' && msg.customName && msg.customName.trim()) {
+        // Use custom name provided by user
+        let baseName = msg.customName.trim();
         let finalName = baseName;
         let duplicateCounter = 1;
         while (usedNames.has(finalName)) {
@@ -339,20 +330,45 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         }
         variableName = finalName;
       } else {
-        // No text nodes available, use color-based naming with brightness
-        const colorName = findNearestColor(fill.color.r, fill.color.g, fill.color.b);
-        const [, , brightness] = rgbToHsb(fill.color.r, fill.color.g, fill.color.b);
-        const brightnessValue = Math.round(brightness);
-        let baseName = `${colorName}-${brightnessValue}`;
-        
-        // Handle duplicate names by adding a counter
-        let finalName = baseName;
-        let duplicateCounter = 1;
-        while (usedNames.has(finalName)) {
-          finalName = `${baseName}-${duplicateCounter}`;
-          duplicateCounter++;
+        // Auto mode - use existing logic
+        if (matchingTextNode) {
+          // Use the matching text node's content
+          let baseName = matchingTextNode.characters;
+          let finalName = baseName;
+          let duplicateCounter = 1;
+          while (usedNames.has(finalName)) {
+            finalName = `${baseName}-${duplicateCounter}`;
+            duplicateCounter++;
+          }
+          variableName = finalName;
+          // Remove this text node from available text nodes to avoid reusing it
+          textNodes.splice(textNodes.indexOf(matchingTextNode), 1);
+        } else if (textNodes.length > 0) {
+          // If no matching text node but there are text nodes available, use the first one
+          let baseName = `${textNodes[0].characters}${counter++}`;
+          let finalName = baseName;
+          let duplicateCounter = 1;
+          while (usedNames.has(finalName)) {
+            finalName = `${baseName}-${duplicateCounter}`;
+            duplicateCounter++;
+          }
+          variableName = finalName;
+        } else {
+          // No text nodes available, use color-based naming with brightness
+          const colorName = findNearestColor(fill.color.r, fill.color.g, fill.color.b);
+          const [, , brightness] = rgbToHsb(fill.color.r, fill.color.g, fill.color.b);
+          const brightnessValue = Math.round(brightness);
+          let baseName = `${colorName}-${brightnessValue}`;
+          
+          // Handle duplicate names by adding a counter
+          let finalName = baseName;
+          let duplicateCounter = 1;
+          while (usedNames.has(finalName)) {
+            finalName = `${baseName}-${duplicateCounter}`;
+            duplicateCounter++;
+          }
+          variableName = finalName;
         }
-        variableName = finalName;
       }
 
       // Add the name to used names set

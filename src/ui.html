@@ -5,7 +5,7 @@
   <style>
     body {
       font-family: Inter, sans-serif;
-      padding: 16px;
+      padding: 12px;
       margin: 0;
       font-size: 12px;
     }
@@ -13,7 +13,7 @@
     .container {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .form-group {
@@ -86,28 +86,41 @@
       display: none;
     }
 
+    .info-text {
+      font-size: 11px;
+      color: #666;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
   </style>
 </head>
 
 <body>
   <div class="container">
     <div class="form-group">
-      <label for="collection">Save to:</label>
+      <label for="collection">Collection</label>
       <select id="collection">
         <option value="new">Create new collection</option>
       </select>
     </div>
     
     <div class="form-group">
-      <label>Naming:</label>
+      <label>Variable name</label>
+      <div class="info-text">
+        If a text layer grouped with the color layer is selected, the variable will use the text as the variable name. Otherwise, it will fall back to one of these options:
+      </div>
       <div class="radio-group">
         <div class="radio-option">
           <input type="radio" id="auto-name" name="naming-mode" value="auto" checked>
-          <label for="auto-name">Auto-detect color names</label>
+          <label for="auto-name">Best match</label>
+        </div>
+        <div class="info-text" id="auto-info" style="margin-left: 18px; margin-top: 2px;">
+          Analyzes RGB values to find the closest CSS color name (e.g., red-85, blue-72)
         </div>
         <div class="radio-option">
           <input type="radio" id="manual-name" name="naming-mode" value="manual">
-          <label for="manual-name">Custom name</label>
+          <label for="manual-name">Custom</label>
         </div>
       </div>
     </div>
@@ -180,11 +193,15 @@
       radio.addEventListener('change', () => {
         const customNameRow = document.getElementById('custom-name-row');
         const customNameInput = document.getElementById('custom-name');
+        const autoInfo = document.getElementById('auto-info');
+        
         if (radio.value === 'manual') {
           customNameRow.classList.remove('hidden');
+          autoInfo.classList.add('hidden');
           customNameInput.focus();
         } else {
           customNameRow.classList.add('hidden');
+          autoInfo.classList.remove('hidden');
         }
       });
     });

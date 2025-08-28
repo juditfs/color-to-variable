@@ -276,7 +276,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
     const selection = figma.currentPage.selection;
 
     if (selection.length === 0) {
-      figma.notify('Please select layers with fill and optionally text layers');
+      figma.notify('Please select at least one layer with a solid fill');
       return;
     }
 
@@ -296,7 +296,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
     }
 
     if (filledNodes.length === 0) {
-      figma.notify('Please select at least one layer with fill');
+      figma.notify('Please select at least one layer with a solid fill');
       return;
     }
 

@@ -117,6 +117,10 @@
       color: #666;
       line-height: 1.4;
       margin-top: 2px;
+      background: #F0F8FF;
+      padding: 8px 10px;
+      border-radius: 4px;
+      border-left: 3px solid #18A0FB;
     }
 
     .expandable-panel {
@@ -153,13 +157,26 @@
     }
 
     .expandable-arrow {
-      width: 12px;
-      height: 12px;
+      width: 8px;
+      height: 6px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 6"><path fill="none" stroke="%23666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2 2l3 3 3-3"/></svg>');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 8px;
       transition: transform 0.2s ease;
+      transform: rotate(-90deg); /* Start pointing right */
     }
 
     .expandable-arrow.expanded {
-      transform: rotate(90deg);
+      transform: rotate(0deg); /* Point down when expanded */
+    }
+
+    .section-heading {
+      font-size: 12px;
+      font-weight: 600;
+      color: #333;
+      margin: 0 0 8px 0;
+      font-family: Inter, sans-serif;
     }
   </style>
 </head>
@@ -175,15 +192,13 @@
       </div>
       
       <div class="form-group">
-        <label>Variable name</label>
+        <h3 class="section-heading">Variable name</h3>
         <div class="info-text">
-As default, the plugin analyses the selected color fill and tries to best guess the closest color name.<p> To apply a custom name, select a text layer that is grouped with the layer that contains the color fill. The plugin will apply that text to the variable.</p>     </div>
+As default, the plugin analyses the selected color fill and tries to best guess the closest color name.<p> To apply a custom name, select a text layer that is grouped with the layer containingthe color fill. The plugin will apply that text to the variable.</p>     </div>
         
         <div class="expandable-panel">
           <div class="clickable-text" onclick="toggleExpandable()">
-            <svg class="expandable-arrow" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4.5 3L7.5 6L4.5 9" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <div class="expandable-arrow"></div>
             <span>Other naming options</span>
           </div>
           <div class="expandable-content" id="other-options">

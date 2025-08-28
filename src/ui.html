@@ -119,6 +119,48 @@
       margin-top: 2px;
     }
 
+    .expandable-panel {
+      /* border: 1px solid #E5E5E5; */
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .clickable-text {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      font-size: 11px;
+      font-weight: 500;
+      color: #7f7f7f;
+      user-select: none;
+      gap: 6px;
+      padding: 4px 0;
+      transition: color 0.2s ease;
+    }
+
+    .clickable-text:hover {
+      color: #18A0FB;
+    }
+
+    .expandable-content {
+      /* padding: 12px; */
+      display: none;
+    }
+
+    .expandable-content.expanded {
+      display: block;
+    }
+
+    .expandable-arrow {
+      width: 12px;
+      height: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .expandable-arrow.expanded {
+      transform: rotate(90deg);
+    }
   </style>
 </head>
 
@@ -135,19 +177,29 @@
       <div class="form-group">
         <label>Variable name</label>
         <div class="info-text">
-          If a text layer grouped with the color layer is selected, the variable will use the text as the variable name. Otherwise, it will fall back to one of these options:
-        </div>
-        <div class="radio-group">
-          <div class="radio-option">
-            <input type="radio" id="auto-name" name="naming-mode" value="auto" checked>
-            <label for="auto-name">Best match</label>
+As default, the plugin analyses the selected color fill and tries to best guess the closest color name.<p> To apply a custom name, select a text layer that is grouped with the layer that contains the color fill. The plugin will apply that text to the variable.</p>     </div>
+        
+        <div class="expandable-panel">
+          <div class="clickable-text" onclick="toggleExpandable()">
+            <svg class="expandable-arrow" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4.5 3L7.5 6L4.5 9" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Other naming options</span>
           </div>
-          <div class="info-text" id="auto-info" style="margin-left: 18px; margin-top: 2px;">
-            Analyzes RGB values to find the closest CSS color name (e.g., red-85, blue-72)
-          </div>
-          <div class="radio-option">
-            <input type="radio" id="manual-name" name="naming-mode" value="manual">
-            <label for="manual-name">Custom</label>
+          <div class="expandable-content" id="other-options">
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="auto-name" name="naming-mode" value="auto" checked>
+                <label for="auto-name">Best match</label>
+              </div>
+              <div class="info-text" id="auto-info" style="margin-left: 18px; margin-top: 2px;">
+                Analyzes RGB values to find the closest CSS color name (e.g., red-85, blue-72)
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="manual-name" name="naming-mode" value="manual">
+                <label for="manual-name">Custom</label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -251,6 +303,14 @@
         }
       });
     });
+
+    function toggleExpandable() {
+      const content = document.getElementById('other-options');
+      const arrow = document.querySelector('.expandable-arrow');
+      
+      content.classList.toggle('expanded');
+      arrow.classList.toggle('expanded');
+    }
     
     document.getElementById('create').onclick = () => {
       const collectionId = document.getElementById('collection').value;

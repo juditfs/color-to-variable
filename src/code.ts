@@ -5,6 +5,7 @@ interface PluginMessage {
   collectionId?: string;
   namingMode?: 'auto' | 'manual';
   customName?: string;
+  appendColor?: boolean;
 }
 
 let counter = 1;
@@ -205,7 +206,6 @@ function findNearestColor(r: number, g: number, b: number): string {
   return cssColors[nearestIndex].group;
 }
 
-
 // Helper function to convert RGB to HSB and get brightness value
 function rgbToHsb(r: number, g: number, b: number): [number, number, number] {
   const max = Math.max(r, g, b);
@@ -241,9 +241,34 @@ function getAncestors(node: BaseNode): BaseNode[] {
 figma.ui.onmessage = async (msg: PluginMessage) => {
   if (msg.type === 'get-collections') {
     const collections = await figma.variables.getLocalVariableCollections();
+    
+    // Get the last used collection from plugin data
+    let defaultCollectionId = figma.root.getPluginData('lastUsedCollection');
+    
+    // If no stored collection or it doesn't exist anymore, find the most recently modified one
+    if (!defaultCollectionId || !collections.find(c => c.id === defaultCollectionId)) {
+      if (collections.length > 0) {
+        // Find collection with most variables as proxy for most recently used
+        const allVariables = await figma.variables.getLocalVariables();
+        let mostActiveCollection = collections[0];
+        let maxVariableCount = 0;
+        
+        for (const collection of collections) {
+          const variableCount = allVariables.filter(v => v.variableCollectionId === collection.id).length;
+          if (variableCount > maxVariableCount) {
+            maxVariableCount = variableCount;
+            mostActiveCollection = collection;
+          }
+        }
+        
+        defaultCollectionId = mostActiveCollection.id;
+      }
+    }
+    
     figma.ui.postMessage({
       type: 'update-collections',
-      collections: collections.map(c => ({ id: c.id, name: c.name }))
+      collections: collections.map(c => ({ id: c.id, name: c.name })),
+      defaultCollectionId: defaultCollectionId
     });
   }
 
@@ -289,6 +314,9 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         isNewCollection = true;
       }
     }
+    
+    // Use default mode for variable values
+    const targetModeId = targetCollection.modes[0].modeId;
 
     // Keep track of created variables and used names
     const createdVariables: string[] = [];
@@ -322,6 +350,15 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       if (msg.namingMode === 'manual' && msg.customName && msg.customName.trim()) {
         // Use custom name provided by user
         let baseName = msg.customName.trim();
+        
+        // Append color match if checkbox is checked
+        if (msg.appendColor) {
+          const colorName = findNearestColor(fill.color.r, fill.color.g, fill.color.b);
+          const [, , brightness] = rgbToHsb(fill.color.r, fill.color.g, fill.color.b);
+          const brightnessValue = Math.round(brightness);
+          baseName = `${baseName}-${colorName}-${brightnessValue}`;
+        }
+        
         let finalName = baseName;
         let duplicateCounter = 1;
         while (usedNames.has(finalName)) {
@@ -331,8 +368,8 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         variableName = finalName;
       } else {
         // Auto mode - use existing logic
-        if (matchingTextNode) {
-          // Use the matching text node's content
+      if (matchingTextNode) {
+        // Use the matching text node's content
           let baseName = matchingTextNode.characters;
           let finalName = baseName;
           let duplicateCounter = 1;
@@ -341,10 +378,10 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
             duplicateCounter++;
           }
           variableName = finalName;
-          // Remove this text node from available text nodes to avoid reusing it
-          textNodes.splice(textNodes.indexOf(matchingTextNode), 1);
-        } else if (textNodes.length > 0) {
-          // If no matching text node but there are text nodes available, use the first one
+        // Remove this text node from available text nodes to avoid reusing it
+        textNodes.splice(textNodes.indexOf(matchingTextNode), 1);
+      } else if (textNodes.length > 0) {
+        // If no matching text node but there are text nodes available, use the first one
           let baseName = `${textNodes[0].characters}${counter++}`;
           let finalName = baseName;
           let duplicateCounter = 1;
@@ -353,7 +390,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
             duplicateCounter++;
           }
           variableName = finalName;
-        } else {
+      } else {
           // No text nodes available, use color-based naming with brightness
           const colorName = findNearestColor(fill.color.r, fill.color.g, fill.color.b);
           const [, , brightness] = rgbToHsb(fill.color.r, fill.color.g, fill.color.b);
@@ -371,7 +408,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         }
       }
 
-      // Add the name to used names set
+      // Add the final name to used names set
       usedNames.add(variableName);
 
       const variable = await figma.variables.createVariable(
@@ -380,7 +417,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         'COLOR'
       );
 
-      await variable.setValueForMode(targetCollection.modes[0].modeId, {
+      await variable.setValueForMode(targetModeId, {
         r: fill.color.r,
         g: fill.color.g,
         b: fill.color.b,
@@ -391,6 +428,9 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       createdVariables.push(variableName);
     }
 
+    // At the end, after variables are created, store this collection as last used
+    figma.root.setPluginData('lastUsedCollection', targetCollection.id);
+    
     // Show completion message with count
     const count = createdVariables.length;
     if (count === 1) {

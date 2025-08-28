@@ -3,7 +3,7 @@
 interface PluginMessage {
   type: 'create-variable' | 'get-collections';
   collectionId?: string;
-  namingMode?: 'auto' | 'manual';
+  namingMode?: 'figma-default' | 'auto' | 'manual';
   customName?: string;
   appendColor?: boolean;
 }
@@ -347,7 +347,17 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       });
 
       // Handle naming based on mode
-      if (msg.namingMode === 'manual' && msg.customName && msg.customName.trim()) {
+      if (msg.namingMode === 'figma-default') {
+        // Use Figma's default naming: Color + increment
+        let baseName = 'Color';
+        let finalName = baseName;
+        let duplicateCounter = 1;
+        while (usedNames.has(finalName)) {
+          finalName = `${baseName} ${duplicateCounter}`;
+          duplicateCounter++;
+        }
+        variableName = finalName;
+      } else if (msg.namingMode === 'manual' && msg.customName && msg.customName.trim()) {
         // Use custom name provided by user
         let baseName = msg.customName.trim();
         

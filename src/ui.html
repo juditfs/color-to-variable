@@ -27,6 +27,13 @@
       gap: 10px;
     }
 
+    .plugin-description {
+      font-size: 11px;
+      color: #666;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
     .form-group {
       display: flex;
       flex-direction: column;
@@ -178,52 +185,101 @@
       margin: 0 0 8px 0;
       font-family: Inter, sans-serif;
     }
+
+    .step {
+      font-size: 11px;
+      color: #333;
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+
+    .step-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+
+    .step-number {
+      font-size: 11px;
+      font-weight: 600;
+      color: #333;
+      min-width: 20px;
+      flex-shrink: 0;
+    }
+
+    .step-content {
+      font-size: 11px;
+      color: #333;
+      line-height: 1.4;
+      flex: 1;
+    }
   </style>
 </head>
 
 <body>
   <div class="container">
     <div class="form-content">
-      <div class="form-group">
-        <label for="collection">Save to</label>
-        <select id="collection">
-          <option value="new">Create new collection</option>
-        </select>
+      <div class="plugin-description">
+        This plugin converts the fill of a selected layer into a color variable.
       </div>
       
-      <div class="form-group">
-        <h3 class="section-heading">Variable name</h3>
-        <div class="info-text">
-As default, the plugin analyses the selected color fill and tries to best guess the closest color name.<p> To apply a custom name, select a text layer that is grouped with the layer containingthe color fill. The plugin will apply that text to the variable.</p>     </div>
-        
-        <div class="expandable-panel">
-          <div class="clickable-text" onclick="toggleExpandable()">
-            <div class="expandable-arrow"></div>
-            <span>Other naming options</span>
+      <div class="step-row">
+        <div class="step-number">01</div>
+        <div class="step-content">
+          Select 1 or several layers to convert their fill into a color variable.
+        </div>
+      </div>
+      
+      <div class="step-row">
+        <div class="step-number">02</div>
+        <div class="step-content">
+          Additionally select a text layer and the text on it will be used as a variable name. 
+          Otherwise the plugin will default to one of the options below.
+          
+          <div class="expandable-panel">
+            <div class="clickable-text" onclick="toggleExpandable()">
+              <div class="expandable-arrow"></div>
+              <span>Other naming options</span>
+            </div>
+            <div class="expandable-content" id="other-options">
+              <div class="radio-group">
+                <div class="radio-option">
+                  <input type="radio" id="auto-name" name="naming-mode" value="auto" checked>
+                  <label for="auto-name">Best match</label>
+                </div>
+                <div class="info-text" id="auto-info" style="margin-left: 18px; margin-top: 2px;">
+                  Analyzes RGB values to find the closest CSS color name (e.g., red-85, blue-72)
+                </div>
+                <div class="radio-option">
+                  <input type="radio" id="manual-name" name="naming-mode" value="manual">
+                  <label for="manual-name">Custom</label>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="expandable-content" id="other-options">
-            <div class="radio-group">
-              <div class="radio-option">
-                <input type="radio" id="auto-name" name="naming-mode" value="auto" checked>
-                <label for="auto-name">Best match</label>
-              </div>
-              <div class="info-text" id="auto-info" style="margin-left: 18px; margin-top: 2px;">
-                Analyzes RGB values to find the closest CSS color name (e.g., red-85, blue-72)
-              </div>
-              <div class="radio-option">
-                <input type="radio" id="manual-name" name="naming-mode" value="manual">
-                <label for="manual-name">Custom</label>
-              </div>
+          
+          <div class="form-group hidden" id="custom-name-row">
+            <input type="text" id="custom-name" placeholder="Enter variable name...">
+            <div class="radio-option" style="margin-top: 6px;">
+              <input type="checkbox" id="append-color" checked>
+              <label for="append-color">Append color match (e.g., MyColor-red-85)</label>
             </div>
           </div>
         </div>
       </div>
       
-      <div class="form-group hidden" id="custom-name-row">
-        <input type="text" id="custom-name" placeholder="Enter variable name...">
-        <div class="radio-option" style="margin-top: 6px;">
-          <input type="checkbox" id="append-color" checked>
-          <label for="append-color">Append color match (e.g., MyColor-red-85)</label>
+      <div class="step-row">
+        <div class="step-number">03</div>
+        <div class="step-content">
+          Choose which collection to save the variable to.
+          
+          <div class="form-group">
+            <!-- <label for="collection">Save to</label> -->
+            <select id="collection">
+              <option value="new">Create new collection</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>

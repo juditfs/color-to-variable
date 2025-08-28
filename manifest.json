@@ -4,7 +4,9 @@
   "api": "1.0.0",
   "main": "dist/code.js",
   "ui": "src/ui.html",
-  "icon": "icon.svg",
+  "icons": {
+"128": "icon.svg"
+  }
   "editorType": [
     "figma"
   ]

@@ -29,7 +29,7 @@
 
     .plugin-description {
       font-size: 11px;
-      color: #666;
+      /* color: #666; */
       line-height: 1.4;
       margin-bottom: 12px;
     }
@@ -201,11 +201,12 @@
     }
 
     .step-number {
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 10px;
+      /* font-weight: 600; */
       color: #333;
       min-width: 20px;
       flex-shrink: 0;
+      line-height: 1.4;
     }
 
     .step-content {
@@ -213,6 +214,18 @@
       color: #333;
       line-height: 1.4;
       flex: 1;
+    }
+
+    .step-heading {
+      font-size: 11px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .step-content .form-group {
+      margin-top: 8px;
     }
   </style>
 </head>
@@ -225,22 +238,24 @@
       </div>
       
       <div class="step-row">
-        <div class="step-number">01</div>
+        <div class="step-number">[ 01 ]</div>
         <div class="step-content">
-          Select 1 or several layers to convert their fill into a color variable.
+          <div class="step-heading">Select color</div>
+          Select 1 or several layers with a color fill.
         </div>
       </div>
       
       <div class="step-row">
-        <div class="step-number">02</div>
+        <div class="step-number">[ 02 ]</div>
         <div class="step-content">
-          Additionally select a text layer and the text on it will be used as a variable name. 
-          Otherwise the plugin will default to one of the options below.
+          <div class="step-heading">Define name</div>
+          Select 1 or several text layers to use their text as variable names. They must be grouped with their corresponding color layer. 
+          <p>If no text layer is selected, the plugin will default to one of the options below.</p>
           
           <div class="expandable-panel">
             <div class="clickable-text" onclick="toggleExpandable()">
               <div class="expandable-arrow"></div>
-              <span>Other naming options</span>
+              <span>Default naming options</span>
             </div>
             <div class="expandable-content" id="other-options">
               <div class="radio-group">
@@ -270,8 +285,9 @@
       </div>
       
       <div class="step-row">
-        <div class="step-number">03</div>
+        <div class="step-number">[ 03 ]</div>
         <div class="step-content">
+          <div class="step-heading">Save to</div>
           Choose which collection to save the variable to.
           
           <div class="form-group">

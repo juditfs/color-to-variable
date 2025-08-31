@@ -5,7 +5,7 @@ interface PluginMessage {
   collectionId?: string;
   namingMode?: 'figma-default' | 'auto' | 'manual';
   customName?: string;
-  appendColor?: boolean;
+  appendMode?: 'increment' | 'color';
 }
 
 let counter = 1;
@@ -186,23 +186,23 @@ function findNearestColor(r: number, g: number, b: number): string {
   const R = Math.round(r * 255);
   const G = Math.round(g * 255);
   const B = Math.round(b * 255);
-  
+
   let nearestIndex = 0;
   let nearestDistance = 255 * 255 * 255;
-  
+
   for (let i = 0; i < cssColors.length; i++) {
     const deltaR = cssColors[i].r - R;
     const deltaG = cssColors[i].g - G;
     const deltaB = cssColors[i].b - B;
-    
+
     const distance = (deltaR * deltaR) + (deltaG * deltaG) + (deltaB * deltaB);
-    
+
     if (distance < nearestDistance) {
       nearestDistance = distance;
       nearestIndex = i;
     }
   }
-  
+
   return cssColors[nearestIndex].group;
 }
 
@@ -241,10 +241,10 @@ function getAncestors(node: BaseNode): BaseNode[] {
 figma.ui.onmessage = async (msg: PluginMessage) => {
   if (msg.type === 'get-collections') {
     const collections = await figma.variables.getLocalVariableCollections();
-    
+
     // Get the last used collection from plugin data
     let defaultCollectionId = figma.root.getPluginData('lastUsedCollection');
-    
+
     // If no stored collection or it doesn't exist anymore, find the most recently modified one
     if (!defaultCollectionId || !collections.find(c => c.id === defaultCollectionId)) {
       if (collections.length > 0) {
@@ -252,7 +252,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         const allVariables = await figma.variables.getLocalVariables();
         let mostActiveCollection = collections[0];
         let maxVariableCount = 0;
-        
+
         for (const collection of collections) {
           const variableCount = allVariables.filter(v => v.variableCollectionId === collection.id).length;
           if (variableCount > maxVariableCount) {
@@ -260,11 +260,11 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
             mostActiveCollection = collection;
           }
         }
-        
+
         defaultCollectionId = mostActiveCollection.id;
       }
     }
-    
+
     figma.ui.postMessage({
       type: 'update-collections',
       collections: collections.map(c => ({ id: c.id, name: c.name })),
@@ -273,6 +273,12 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
   }
 
   if (msg.type === 'create-variable') {
+    // Add validation check at the beginning
+    if (msg.namingMode === 'manual' && (!msg.customName || !msg.customName.trim())) {
+      figma.notify('Please enter a variable name');
+      return;
+    }
+
     const selection = figma.currentPage.selection;
 
     if (selection.length === 0) {
@@ -314,14 +320,14 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         isNewCollection = true;
       }
     }
-    
+
     // Use default mode for variable values
     const targetModeId = targetCollection.modes[0].modeId;
 
     // Keep track of created variables and used names
     const createdVariables: string[] = [];
     const usedNames = new Set<string>();
-    
+
     // Get existing variable names in the collection to avoid duplicates
     const existingVariables = await figma.variables.getLocalVariables();
     for (const variable of existingVariables) {
@@ -360,26 +366,32 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       } else if (msg.namingMode === 'manual' && msg.customName && msg.customName.trim()) {
         // Use custom name provided by user
         let baseName = msg.customName.trim();
-        
-        // Append color match if checkbox is checked
-        if (msg.appendColor) {
+
+        // Append color match if selected
+        if (msg.appendMode === 'color') {
           const colorName = findNearestColor(fill.color.r, fill.color.g, fill.color.b);
           const [, , brightness] = rgbToHsb(fill.color.r, fill.color.g, fill.color.b);
           const brightnessValue = Math.round(brightness);
-          baseName = `${baseName}-${colorName}-${brightnessValue}`;
+          baseName = `${baseName} ${colorName}-${brightnessValue}`;
         }
-        
+
         let finalName = baseName;
         let duplicateCounter = 1;
         while (usedNames.has(finalName)) {
-          finalName = `${baseName}-${duplicateCounter}`;
+          // For increment mode, use Figma's default format: space + number
+          if (msg.appendMode === 'increment') {
+            finalName = `${msg.customName.trim()} ${duplicateCounter}`;
+          } else {
+            // For color mode, append to the color-appended name
+            finalName = `${baseName}-${duplicateCounter}`;
+          }
           duplicateCounter++;
         }
         variableName = finalName;
       } else {
         // Auto mode - use existing logic
-      if (matchingTextNode) {
-        // Use the matching text node's content
+        if (matchingTextNode) {
+          // Use the matching text node's content
           let baseName = matchingTextNode.characters;
           let finalName = baseName;
           let duplicateCounter = 1;
@@ -388,10 +400,10 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
             duplicateCounter++;
           }
           variableName = finalName;
-        // Remove this text node from available text nodes to avoid reusing it
-        textNodes.splice(textNodes.indexOf(matchingTextNode), 1);
-      } else if (textNodes.length > 0) {
-        // If no matching text node but there are text nodes available, use the first one
+          // Remove this text node from available text nodes to avoid reusing it
+          textNodes.splice(textNodes.indexOf(matchingTextNode), 1);
+        } else if (textNodes.length > 0) {
+          // If no matching text node but there are text nodes available, use the first one
           let baseName = `${textNodes[0].characters}${counter++}`;
           let finalName = baseName;
           let duplicateCounter = 1;
@@ -400,13 +412,13 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
             duplicateCounter++;
           }
           variableName = finalName;
-      } else {
+        } else {
           // No text nodes available, use color-based naming with brightness
           const colorName = findNearestColor(fill.color.r, fill.color.g, fill.color.b);
           const [, , brightness] = rgbToHsb(fill.color.r, fill.color.g, fill.color.b);
           const brightnessValue = Math.round(brightness);
           let baseName = `${colorName}-${brightnessValue}`;
-          
+
           // Handle duplicate names by adding a counter
           let finalName = baseName;
           let duplicateCounter = 1;
@@ -440,7 +452,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
 
     // At the end, after variables are created, store this collection as last used
     figma.root.setPluginData('lastUsedCollection', targetCollection.id);
-    
+
     // Show completion message with count
     const count = createdVariables.length;
     if (count === 1) {

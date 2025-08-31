@@ -46,7 +46,8 @@
       font-size: 11px;
     }
 
-    select, input[type="text"] {
+    select,
+    input[type="text"] {
       padding: 6px 8px;
       border-radius: 4px;
       border: 1px solid #E5E5E5;
@@ -55,20 +56,23 @@
     }
 
     select {
-  /* Hide default arrow */
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  
-  /* Add custom smaller arrow with right padding */
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 6"><path fill="none" stroke="%23666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2 2l3 3 3-3"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  background-size: 8px; /* Smaller arrow */
-  padding-right: 20px; /* Extra padding on the right */
-}
+      /* Hide default arrow */
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
 
-    select:focus, input[type="text"]:focus {
+      /* Add custom smaller arrow with right padding */
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 6"><path fill="none" stroke="%23666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2 2l3 3 3-3"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      background-size: 8px;
+      /* Smaller arrow */
+      padding-right: 20px;
+      /* Extra padding on the right */
+    }
+
+    select:focus,
+    input[type="text"]:focus {
       outline: none;
       border-color: #18A0FB;
       box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.1);
@@ -77,7 +81,8 @@
     .radio-group {
       display: flex;
       flex-direction: column;
-      gap: 2px; /* Reduced from 6px to 2px */
+      gap: 2px;
+      /* Reduced from 6px to 2px */
     }
 
     .radio-option {
@@ -86,7 +91,8 @@
       gap: 6px;
     }
 
-    .radio-option input[type="radio"], .radio-option input[type="checkbox"] {
+    .radio-option input[type="radio"],
+    .radio-option input[type="checkbox"] {
       margin: 0;
     }
 
@@ -180,8 +186,10 @@
       font-size: 11px;
       color: #666;
       line-height: 1.4;
-      margin-top: 0; /* Remove the top margin */
-      margin-bottom: 4px; /* Add small bottom margin for spacing between groups */
+      margin-top: 0;
+      /* Remove the top margin */
+      margin-bottom: 4px;
+      /* Add small bottom margin for spacing between groups */
     }
 
     .expandable-arrow {
@@ -192,7 +200,8 @@
       background-position: center;
       background-size: 8px;
       transition: transform 0.2s ease;
-      transform: rotate(-90deg); /* Start pointing right */
+      transform: rotate(-90deg);
+      /* Start pointing right */
     }
 
     .clickable-text:hover .expandable-arrow {
@@ -200,7 +209,8 @@
     }
 
     .expandable-arrow.expanded {
-      transform: rotate(0deg); /* Point down when expanded */
+      transform: rotate(0deg);
+      /* Point down when expanded */
     }
 
     .section-heading {
@@ -252,6 +262,22 @@
     .step-content .form-group {
       margin-top: 8px;
     }
+
+    input[type="text"].error {
+      border-color: #D7354A;
+      box-shadow: 0 0 0 2px rgba(255, 59, 48, 0.1);
+    }
+
+    label.error {
+      color: #D7354A;
+    }
+
+    .error-message {
+      color: #D7354A;
+      font-size: 11px;
+      display: none;
+    }
+
   </style>
 </head>
 
@@ -261,7 +287,7 @@
       <div class="plugin-description">
         This plugin converts the fill of selected layers to color variables.
       </div>
-      
+
       <div class="step-row">
         <div class="step-number">[ 01 ]</div>
         <div class="step-content">
@@ -269,14 +295,15 @@
           Select 1 or several layers with a color fill.
         </div>
       </div>
-      
+
       <div class="step-row">
         <div class="step-number">[ 02 ]</div>
         <div class="step-content">
           <div class="step-heading">Define name</div>
-          Select 1 or several text layers to use their text as variable names. They must be grouped with their corresponding color layer. 
+          Select 1 or several text layers to use their text as variable names. They must be grouped with their
+          corresponding color layer.
           <p>If no text layer is selected, the plugin will default to one of the options below.</p>
-          
+
           <div class="expandable-panel">
             <div class="clickable-text" onclick="toggleExpandable()">
               <div class="expandable-arrow"></div>
@@ -289,9 +316,9 @@
                   <label for="figma-default">Figma default</label>
                 </div>
                 <div class="info-text" id="figma-default-info" style="margin-left: 18px; margin-top: 2px;">
-                Color, Color 2...
+                  Color, Color 2...
                 </div>
-                
+
                 <div class="radio-option">
                   <input type="radio" id="auto-name" name="naming-mode" value="auto">
                   <label for="auto-name">Best match</label>
@@ -299,32 +326,44 @@
                 <div class="info-text" id="auto-info" style="margin-left: 18px; margin-top: 2px; display: none;">
                   Analyzes color values to find the closest base color name (e.g., red-85, blue-72)
                 </div>
-                
+
                 <div class="radio-option">
                   <input type="radio" id="manual-name" name="naming-mode" value="manual">
                   <label for="manual-name">Custom</label>
                 </div>
-                
+
                 <div class="form-group hidden" id="custom-name-row">
-                  <input type="text" id="custom-name" placeholder="Enter variable name...">
-                  <div class="radio-option" style="margin-top: 6px;">
-                    <input type="checkbox" id="append-color" checked>
-                    <label for="append-color">Append color match (e.g., MyColor-red-85)</label>
+                  <!-- Add label for custom name input -->
+                  <label for="custom-name">Variable name</label>
+                  <input type="text" id="custom-name" placeholder="MyColor">
+                  <span class="error-message" id="name-error">Enter a variable name</span>
+
+                  <label style="margin-top: 8px;">If name already exists</label>
+
+                  <div class="radio-group" style="margin-top: 6px;">
+                    <div class="radio-option">
+                      <input type="radio" id="append-increment" name="append-mode" value="increment" checked>
+                      <label for="append-increment">Append increment (e.g., MyColor, MyColor 2)</label>
+                    </div>
+                    <div class="radio-option">
+                      <input type="radio" id="append-color" name="append-mode" value="color">
+                      <label for="append-color">Append color match (e.g., MyColor red-85)</label>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          
+
         </div>
       </div>
-      
+
       <div class="step-row">
         <div class="step-number">[ 03 ]</div>
         <div class="step-content">
           <div class="step-heading">Save to</div>
           Choose which collection to save the variable to.
-          
+
           <div class="form-group">
             <!-- <label for="collection">Save to</label> -->
             <select id="collection">
@@ -354,53 +393,53 @@
     function updateCollectionsDropdown(collections, defaultCollectionId = null) {
       const select = document.getElementById('collection');
       select.innerHTML = '';
-      
+
       let hasDefault = false;
-      
+
       // Add existing collections first
       collections.forEach(collection => {
         const option = document.createElement('option');
         option.value = collection.id;
         option.textContent = collection.name;
-        
+
         // Select the default collection if specified
         if (defaultCollectionId === collection.id) {
           option.selected = true;
           hasDefault = true;
         }
-        
+
         select.appendChild(option);
       });
-      
+
       // Add "Create new collection" option at the end
       const newOption = document.createElement('option');
       newOption.value = 'new';
       newOption.textContent = 'Create new collection';
-      
+
       // Only select "Create new collection" if no default was found and no collections exist
       if (!hasDefault && collections.length === 0) {
         newOption.selected = true;
       }
-      
+
       select.appendChild(newOption);
     }
 
     function addNewCollectionToDropdown(newCollection) {
       const select = document.getElementById('collection');
-      
+
       // Remove the "Create new collection" option temporarily
       const createNewOption = select.querySelector('option[value="new"]');
       if (createNewOption) {
         createNewOption.remove();
       }
-      
+
       // Add the new collection
       const option = document.createElement('option');
       option.value = newCollection.id;
       option.textContent = newCollection.name;
       option.selected = true; // Select the newly created collection
       select.appendChild(option);
-      
+
       // Re-add "Create new collection" option at the end
       const newOption = document.createElement('option');
       newOption.value = 'new';
@@ -414,7 +453,7 @@
         const customNameRow = document.getElementById('custom-name-row');
         const customNameInput = document.getElementById('custom-name');
         const autoInfo = document.getElementById('auto-info');
-        
+
         if (radio.value === 'manual') {
           customNameRow.classList.remove('hidden');
           autoInfo.classList.add('hidden');
@@ -429,36 +468,60 @@
     function toggleExpandable() {
       const content = document.getElementById('other-options');
       const arrow = document.querySelector('.expandable-arrow');
-      
+
       content.classList.toggle('expanded');
       arrow.classList.toggle('expanded');
     }
-    
+
     document.getElementById('create').onclick = () => {
-      const collectionId = document.getElementById('collection').value;
       const namingMode = document.querySelector('input[name="naming-mode"]:checked').value;
-      const customName = document.getElementById('custom-name').value;
-      const appendColor = document.getElementById('append-color').checked;
-      
+      const customNameInput = document.getElementById('custom-name');
+      const customNameLabel = document.querySelector('label[for="custom-name"]');
+      const errorMessage = document.getElementById('name-error');
+
+      // Validate custom name when manual mode is selected
+      if (namingMode === 'manual') {
+        const customName = customNameInput.value.trim();
+        if (!customName) {
+          // Add error styling to both input and label
+          customNameInput.classList.add('error');
+          customNameLabel.classList.add('error');
+          errorMessage.style.display = 'block';
+          figma.notify('Please enter a variable name');
+          return;
+        }
+        // Remove error styling if valid
+        customNameInput.classList.remove('error');
+        customNameLabel.classList.remove('error');
+        errorMessage.style.display = 'none';
+      }
+
       parent.postMessage({
         pluginMessage: {
           type: 'create-variable',
-          collectionId,
-          namingMode,
-          customName,
-          appendColor
+          collectionId: document.getElementById('collection').value,
+          namingMode: namingMode,
+          customName: customNameInput.value,
+          appendMode: document.querySelector('input[name="append-mode"]:checked')?.value
         }
       }, '*');
     };
 
-    document.addEventListener('DOMContentLoaded', function() {
+    // Add input handler to remove error state when user starts typing
+    document.getElementById('custom-name').addEventListener('input', (e) => {
+      e.target.classList.remove('error');
+      document.querySelector('label[for="custom-name"]').classList.remove('error');
+      document.getElementById('name-error').style.display = 'none';
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
       // Handle radio button changes for naming options
       document.querySelectorAll('input[name="naming-mode"]').forEach(radio => {
         radio.addEventListener('change', () => {
           // Hide all info texts first
           document.getElementById('figma-default-info').style.display = 'none';
           document.getElementById('auto-info').style.display = 'none';
-          
+
           // Show the info text for the selected option
           if (radio.value === 'figma-default') {
             document.getElementById('figma-default-info').style.display = 'block';
@@ -468,7 +531,7 @@
           // Custom option doesn't have info text
         });
       });
-      
+
       // Show the default info text on page load (since figma-default is checked by default)
       document.getElementById('figma-default-info').style.display = 'block';
     });

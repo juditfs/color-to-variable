@@ -8,23 +8,23 @@
       padding: 12px;
       margin: 0;
       font-size: 11px;
-      height: calc(100vh - 24px);
+      height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     .container {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      flex: 1;
+      height: calc(100vh - 24px);
     }
 
     .form-content {
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      overflow-y: auto;
+      padding-right: 8px;
+      margin-bottom: 12px;
     }
 
     .plugin-description {
@@ -114,7 +114,7 @@
       font-weight: 500;
       font-family: Inter, sans-serif;
       width: 100%;
-      margin-top: auto;
+      margin-top: 0;
     }
 
     button:hover {
@@ -163,14 +163,13 @@
     }
 
     .expandable-content {
-      /* padding: 12px; */
-      display: none;
-      font-size: 11px;
-      color: #333;
       background-color: #f5f5f5;
-      padding: 8px;
       border-radius: 4px;
+      padding: 8px;
       margin-top: 4px;
+      display: none;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .expandable-content.expanded {

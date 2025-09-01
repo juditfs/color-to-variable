@@ -4491,7 +4491,8 @@ function sanitizeVariableName(name: string): string {
     .replace(/[,;:|]/g, ' ') // Replace commas, semicolons, colons, pipes with spaces
     .replace(/[<>'"]/g, ' ') // Replace quotes and angle brackets with spaces
     .replace(/[\[\](){}]/g, ' ') // Replace brackets and parentheses with spaces
-    .replace(/[#@$%^&*+=]/g, ' ') // Replace special symbols with spaces (including $)
+    .replace(/[\$]/g, '') // Remove dollar signs completely
+    .replace(/[#@%^&*+=]/g, ' ') // Replace other special symbols with spaces
     .replace(/\s+/g, ' ') // Collapse multiple spaces to single space
     .replace(/^\-+|\-+$/g, '') // Remove leading or trailing hyphens only
     .substring(0, 100) // Limit length to 100 characters

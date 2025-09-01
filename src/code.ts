@@ -12,198 +12,4520 @@ let counter = 1;
 
 figma.showUI(__html__, { width: 320, height: 600 });
 
-// CSS color palette with W3Schools color group mappings
-const cssColors = [
-  // Pink colors
-  { name: 'pink', r: 255, g: 192, b: 203, group: 'pink' },
-  { name: 'lightpink', r: 255, g: 182, b: 193, group: 'pink' },
-  { name: 'hotpink', r: 255, g: 105, b: 180, group: 'pink' },
-  { name: 'deeppink', r: 255, g: 20, b: 147, group: 'pink' },
-  { name: 'mediumvioletred', r: 199, g: 21, b: 133, group: 'pink' },
-  { name: 'palevioletred', r: 219, g: 112, b: 147, group: 'pink' },
+// CSS color palette with expanded color matches
 
-  // Red colors
-  { name: 'lightsalmon', r: 255, g: 160, b: 122, group: 'red' },
-  { name: 'salmon', r: 250, g: 128, b: 114, group: 'red' },
-  { name: 'darksalmon', r: 233, g: 150, b: 122, group: 'red' },
-  { name: 'lightcoral', r: 240, g: 128, b: 128, group: 'red' },
-  { name: 'indianred', r: 205, g: 92, b: 92, group: 'red' },
-  { name: 'crimson', r: 220, g: 20, b: 60, group: 'red' },
-  { name: 'firebrick', r: 178, g: 34, b: 34, group: 'red' },
-  { name: 'red', r: 255, g: 0, b: 0, group: 'red' },
-  { name: 'darkred', r: 139, g: 0, b: 0, group: 'red' },
+// Types for color groups
+type ChromaticGroup = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple' | 'pink' | 'brown' | 'turquoise';
+type NeutralGroup = 'white' | 'gray' | 'black';
+type Group = ChromaticGroup | NeutralGroup;
 
-  // Orange colors
-  { name: 'coral', r: 255, g: 127, b: 80, group: 'orange' },
-  { name: 'tomato', r: 255, g: 99, b: 71, group: 'orange' },
-  { name: 'orangered', r: 255, g: 69, b: 0, group: 'orange' },
-  { name: 'gold', r: 255, g: 215, b: 0, group: 'orange' },
-  { name: 'orange', r: 255, g: 165, b: 0, group: 'orange' },
-  { name: 'darkorange', r: 255, g: 140, b: 0, group: 'orange' },
+interface NamedColor {
+  name: string;
+  r: number;
+  g: number;
+  b: number;
+  group: Group;
+}
 
-  // Yellow colors
-  { name: 'lightyellow', r: 255, g: 255, b: 224, group: 'yellow' },
-  { name: 'lemonchiffon', r: 255, g: 250, b: 205, group: 'yellow' },
-  { name: 'lightgoldenrodyellow', r: 250, g: 250, b: 210, group: 'yellow' },
-  { name: 'papayawhip', r: 255, g: 239, b: 213, group: 'yellow' },
-  { name: 'moccasin', r: 255, g: 228, b: 181, group: 'yellow' },
-  { name: 'peachpuff', r: 255, g: 218, b: 185, group: 'yellow' },
-  { name: 'palegoldenrod', r: 238, g: 232, b: 170, group: 'yellow' },
-  { name: 'khaki', r: 240, g: 230, b: 140, group: 'yellow' },
-  { name: 'darkkhaki', r: 189, g: 183, b: 107, group: 'yellow' },
-  { name: 'yellow', r: 255, g: 255, b: 0, group: 'yellow' },
-
-  // Purple colors
-  { name: 'lavender', r: 230, g: 230, b: 250, group: 'purple' },
-  { name: 'thistle', r: 216, g: 191, b: 216, group: 'purple' },
-  { name: 'plum', r: 221, g: 160, b: 221, group: 'purple' },
-  { name: 'violet', r: 238, g: 130, b: 238, group: 'purple' },
-  { name: 'orchid', r: 218, g: 112, b: 214, group: 'purple' },
-  { name: 'fuchsia', r: 255, g: 0, b: 255, group: 'purple' },
-  { name: 'magenta', r: 255, g: 0, b: 255, group: 'purple' },
-  { name: 'mediumorchid', r: 186, g: 85, b: 211, group: 'purple' },
-  { name: 'mediumpurple', r: 147, g: 112, b: 219, group: 'purple' },
-  { name: 'rebeccapurple', r: 102, g: 51, b: 153, group: 'purple' },
-  { name: 'blueviolet', r: 138, g: 43, b: 226, group: 'purple' },
-  { name: 'darkviolet', r: 148, g: 0, b: 211, group: 'purple' },
-  { name: 'darkorchid', r: 153, g: 50, b: 204, group: 'purple' },
-  { name: 'darkmagenta', r: 139, g: 0, b: 139, group: 'purple' },
-  { name: 'purple', r: 128, g: 0, b: 128, group: 'purple' },
-  { name: 'indigo', r: 75, g: 0, b: 130, group: 'purple' },
-  { name: 'slateblue', r: 106, g: 90, b: 205, group: 'purple' },
-  { name: 'darkslateblue', r: 72, g: 61, b: 139, group: 'purple' },
-  { name: 'mediumslateblue', r: 123, g: 104, b: 238, group: 'purple' },
-
-  // Green colors
-  { name: 'greenyellow', r: 173, g: 255, b: 47, group: 'green' },
-  { name: 'chartreuse', r: 127, g: 255, b: 0, group: 'green' },
-  { name: 'lawngreen', r: 124, g: 252, b: 0, group: 'green' },
-  { name: 'lime', r: 0, g: 255, b: 0, group: 'green' },
-  { name: 'limegreen', r: 50, g: 205, b: 50, group: 'green' },
-  { name: 'palegreen', r: 152, g: 251, b: 152, group: 'green' },
-  { name: 'lightgreen', r: 144, g: 238, b: 144, group: 'green' },
-  { name: 'mediumspringgreen', r: 0, g: 250, b: 154, group: 'green' },
-  { name: 'springgreen', r: 0, g: 255, b: 127, group: 'green' },
-  { name: 'mediumseagreen', r: 60, g: 179, b: 113, group: 'green' },
-  { name: 'seagreen', r: 46, g: 139, b: 87, group: 'green' },
-  { name: 'forestgreen', r: 34, g: 139, b: 34, group: 'green' },
-  { name: 'green', r: 0, g: 128, b: 0, group: 'green' },
-  { name: 'darkgreen', r: 0, g: 100, b: 0, group: 'green' },
-  { name: 'yellowgreen', r: 154, g: 205, b: 50, group: 'green' },
-  { name: 'olivedrab', r: 107, g: 142, b: 35, group: 'green' },
-  { name: 'olive', r: 128, g: 128, b: 0, group: 'green' },
-  { name: 'darkolivegreen', r: 85, g: 107, b: 47, group: 'green' },
-  { name: 'mediumaquamarine', r: 102, g: 205, b: 170, group: 'green' },
-  { name: 'darkseagreen', r: 143, g: 188, b: 143, group: 'green' },
-  { name: 'lightseagreen', r: 32, g: 178, b: 170, group: 'green' },
-  { name: 'darkcyan', r: 0, g: 139, b: 139, group: 'green' },
-  { name: 'teal', r: 0, g: 128, b: 128, group: 'green' },
-
-  // Cyan colors
-  { name: 'aqua', r: 0, g: 255, b: 255, group: 'cyan' },
-  { name: 'cyan', r: 0, g: 255, b: 255, group: 'cyan' },
-  { name: 'lightcyan', r: 224, g: 255, b: 255, group: 'cyan' },
-  { name: 'paleturquoise', r: 175, g: 238, b: 238, group: 'cyan' },
-  { name: 'aquamarine', r: 127, g: 255, b: 212, group: 'cyan' },
-  { name: 'turquoise', r: 64, g: 224, b: 208, group: 'cyan' },
-  { name: 'mediumturquoise', r: 72, g: 209, b: 204, group: 'cyan' },
-  { name: 'darkturquoise', r: 0, g: 206, b: 209, group: 'cyan' },
-
-  // Blue colors
-  { name: 'cadetblue', r: 95, g: 158, b: 160, group: 'blue' },
-  { name: 'steelblue', r: 70, g: 130, b: 180, group: 'blue' },
-  { name: 'lightsteelblue', r: 176, g: 196, b: 222, group: 'blue' },
-  { name: 'powderblue', r: 176, g: 224, b: 230, group: 'blue' },
-  { name: 'lightblue', r: 173, g: 216, b: 230, group: 'blue' },
-  { name: 'skyblue', r: 135, g: 206, b: 235, group: 'blue' },
-  { name: 'lightskyblue', r: 135, g: 206, b: 250, group: 'blue' },
-  { name: 'deepskyblue', r: 0, g: 191, b: 255, group: 'blue' },
-  { name: 'dodgerblue', r: 30, g: 144, b: 255, group: 'blue' },
-  { name: 'cornflowerblue', r: 100, g: 149, b: 237, group: 'blue' },
-  { name: 'royalblue', r: 65, g: 105, b: 225, group: 'blue' },
-  { name: 'blue', r: 0, g: 0, b: 255, group: 'blue' },
-  { name: 'mediumblue', r: 0, g: 0, b: 205, group: 'blue' },
-  { name: 'darkblue', r: 0, g: 0, b: 139, group: 'blue' },
-  { name: 'navy', r: 0, g: 0, b: 128, group: 'blue' },
-  { name: 'midnightblue', r: 25, g: 25, b: 112, group: 'blue' },
-
-  // Brown colors
-  { name: 'cornsilk', r: 255, g: 248, b: 220, group: 'brown' },
-  { name: 'blanchedalmond', r: 255, g: 235, b: 205, group: 'brown' },
-  { name: 'bisque', r: 255, g: 228, b: 196, group: 'brown' },
-  { name: 'navajowhite', r: 255, g: 222, b: 173, group: 'brown' },
-  { name: 'wheat', r: 245, g: 222, b: 179, group: 'brown' },
-  { name: 'burlywood', r: 222, g: 184, b: 135, group: 'brown' },
-  { name: 'tan', r: 210, g: 180, b: 140, group: 'brown' },
-  { name: 'rosybrown', r: 188, g: 143, b: 143, group: 'brown' },
-  { name: 'sandybrown', r: 244, g: 164, b: 96, group: 'brown' },
-  { name: 'goldenrod', r: 218, g: 165, b: 32, group: 'brown' },
-  { name: 'darkgoldenrod', r: 184, g: 134, b: 11, group: 'brown' },
-  { name: 'peru', r: 205, g: 133, b: 63, group: 'brown' },
-  { name: 'chocolate', r: 210, g: 105, b: 30, group: 'brown' },
-  { name: 'saddlebrown', r: 139, g: 69, b: 19, group: 'brown' },
-  { name: 'sienna', r: 160, g: 82, b: 45, group: 'brown' },
-  { name: 'brown', r: 165, g: 42, b: 42, group: 'brown' },
-  { name: 'maroon', r: 128, g: 0, b: 0, group: 'brown' },
-
-  // White colors
-  { name: 'white', r: 255, g: 255, b: 255, group: 'white' },
-  { name: 'snow', r: 255, g: 250, b: 250, group: 'white' },
-  { name: 'honeydew', r: 240, g: 255, b: 240, group: 'white' },
-  { name: 'mintcream', r: 245, g: 255, b: 250, group: 'white' },
-  { name: 'azure', r: 240, g: 255, b: 255, group: 'white' },
-  { name: 'aliceblue', r: 240, g: 248, b: 255, group: 'white' },
-  { name: 'ghostwhite', r: 248, g: 248, b: 255, group: 'white' },
-  { name: 'whitesmoke', r: 245, g: 245, b: 245, group: 'white' },
-  { name: 'seashell', r: 255, g: 245, b: 238, group: 'white' },
-  { name: 'beige', r: 245, g: 245, b: 220, group: 'white' },
-  { name: 'oldlace', r: 253, g: 245, b: 230, group: 'white' },
-  { name: 'floralwhite', r: 255, g: 250, b: 240, group: 'white' },
-  { name: 'ivory', r: 255, g: 255, b: 240, group: 'white' },
-  { name: 'antiquewhite', r: 250, g: 235, b: 215, group: 'white' },
-  { name: 'linen', r: 250, g: 240, b: 230, group: 'white' },
-  { name: 'lavenderblush', r: 255, g: 240, b: 245, group: 'white' },
-  { name: 'mistyrose', r: 255, g: 228, b: 225, group: 'white' },
-
-  // Gray colors
-  { name: 'gainsboro', r: 220, g: 220, b: 220, group: 'gray' },
-  { name: 'lightgray', r: 211, g: 211, b: 211, group: 'gray' },
-  { name: 'silver', r: 192, g: 192, b: 192, group: 'gray' },
-  { name: 'darkgray', r: 169, g: 169, b: 169, group: 'gray' },
-  { name: 'gray', r: 128, g: 128, b: 128, group: 'gray' },
-  { name: 'dimgray', r: 105, g: 105, b: 105, group: 'gray' },
-  { name: 'lightslategray', r: 119, g: 136, b: 153, group: 'gray' },
-  { name: 'slategray', r: 112, g: 128, b: 144, group: 'gray' },
-  { name: 'darkslategray', r: 47, g: 79, b: 79, group: 'gray' },
-
-  // Black
-  { name: 'black', r: 0, g: 0, b: 0, group: 'black' }
+const cssColors: NamedColor[] = [
+  {
+    name: "Amaranth purple",
+    r: 171,
+    g: 39,
+    b: 79,
+    group: "red"
+  },
+  {
+    name: "Barn red",
+    r: 124,
+    g: 9,
+    b: 2,
+    group: "red"
+  },
+  {
+    name: "Bittersweet",
+    r: 254,
+    g: 111,
+    b: 94,
+    group: "red"
+  },
+  {
+    name: "Bittersweet shimmer",
+    r: 191,
+    g: 79,
+    b: 81,
+    group: "red"
+  },
+  {
+    name: "Blood red",
+    r: 102,
+    g: 0,
+    b: 0,
+    group: "red"
+  },
+  {
+    name: "Bright pink (Crayola)",
+    r: 251,
+    g: 96,
+    b: 127,
+    group: "red"
+  },
+  {
+    name: "Burgundy",
+    r: 128,
+    g: 0,
+    b: 32,
+    group: "red"
+  },
+  {
+    name: "Candy apple red",
+    r: 255,
+    g: 8,
+    b: 0,
+    group: "red"
+  },
+  {
+    name: "Cantaloupe melon",
+    r: 253,
+    g: 188,
+    b: 180,
+    group: "red"
+  },
+  {
+    name: "Cardinal",
+    r: 197,
+    g: 30,
+    b: 58,
+    group: "red"
+  },
+  {
+    name: "Carmine",
+    r: 150,
+    g: 0,
+    b: 24,
+    group: "red"
+  },
+  {
+    name: "Cerise",
+    r: 222,
+    g: 49,
+    b: 99,
+    group: "red"
+  },
+  {
+    name: "Chili red",
+    r: 226,
+    g: 61,
+    b: 40,
+    group: "red"
+  },
+  {
+    name: "Chocolate cosmos",
+    r: 88,
+    g: 17,
+    b: 26,
+    group: "red"
+  },
+  {
+    name: "Cinnabar",
+    r: 228,
+    g: 77,
+    b: 46,
+    group: "red"
+  },
+  {
+    name: "Claret",
+    r: 127,
+    g: 23,
+    b: 52,
+    group: "red"
+  },
+  {
+    name: "Coquelicot",
+    r: 255,
+    g: 56,
+    b: 0,
+    group: "red"
+  },
+  {
+    name: "Coral pink",
+    r: 248,
+    g: 131,
+    b: 121,
+    group: "red"
+  },
+  {
+    name: "Cordovan",
+    r: 137,
+    g: 63,
+    b: 69,
+    group: "red"
+  },
+  {
+    name: "Cornell red",
+    r: 179,
+    g: 27,
+    b: 27,
+    group: "red"
+  },
+  {
+    name: "Crimson",
+    r: 220,
+    g: 20,
+    b: 60,
+    group: "red"
+  },
+  {
+    name: "Dark red",
+    r: 139,
+    g: 0,
+    b: 0,
+    group: "red"
+  },
+  {
+    name: "Falu red",
+    r: 128,
+    g: 24,
+    b: 24,
+    group: "red"
+  },
+  {
+    name: "Fire brick",
+    r: 178,
+    g: 34,
+    b: 34,
+    group: "red"
+  },
+  {
+    name: "Fire engine red",
+    r: 206,
+    g: 32,
+    b: 41,
+    group: "red"
+  },
+  {
+    name: "Folly",
+    r: 255,
+    g: 0,
+    b: 79,
+    group: "red"
+  },
+  {
+    name: "Garnet",
+    r: 115,
+    g: 54,
+    b: 53,
+    group: "red"
+  },
+  {
+    name: "Imperial red",
+    r: 237,
+    g: 41,
+    b: 57,
+    group: "red"
+  },
+  {
+    name: "Indian red",
+    r: 205,
+    g: 92,
+    b: 92,
+    group: "red"
+  },
+  {
+    name: "Jasper",
+    r: 208,
+    g: 83,
+    b: 64,
+    group: "red"
+  },
+  {
+    name: "Light coral",
+    r: 240,
+    g: 128,
+    b: 128,
+    group: "red"
+  },
+  {
+    name: "Light red",
+    r: 255,
+    g: 127,
+    b: 127,
+    group: "red"
+  },
+  {
+    name: "Madder",
+    r: 165,
+    g: 0,
+    b: 33,
+    group: "red"
+  },
+  {
+    name: "Mahogany",
+    r: 192,
+    g: 64,
+    b: 0,
+    group: "red"
+  },
+  {
+    name: "Maroon",
+    r: 128,
+    g: 0,
+    b: 0,
+    group: "red"
+  },
+  {
+    name: "Misty rose",
+    r: 255,
+    g: 228,
+    b: 225,
+    group: "red"
+  },
+  {
+    name: "Off Red (RGB)",
+    r: 254,
+    g: 0,
+    b: 0,
+    group: "red"
+  },
+  {
+    name: "Old rose",
+    r: 192,
+    g: 128,
+    b: 129,
+    group: "red"
+  },
+  {
+    name: "OU crimson",
+    r: 132,
+    g: 22,
+    b: 23,
+    group: "red"
+  },
+  {
+    name: "Penn red",
+    r: 153,
+    g: 0,
+    b: 0,
+    group: "red"
+  },
+  {
+    name: "Persian red",
+    r: 204,
+    g: 51,
+    b: 51,
+    group: "red"
+  },
+  {
+    name: "Pink",
+    r: 255,
+    g: 192,
+    b: 203,
+    group: "red"
+  },
+  {
+    name: "Poppy",
+    r: 220,
+    g: 52,
+    b: 59,
+    group: "red"
+  },
+  {
+    name: "Red",
+    r: 255,
+    g: 0,
+    b: 0,
+    group: "red"
+  },
+  {
+    name: "Red Brown",
+    r: 165,
+    g: 42,
+    b: 42,
+    group: "red"
+  },
+  {
+    name: "Red (CMYK)",
+    r: 237,
+    g: 27,
+    b: 36,
+    group: "red"
+  },
+  {
+    name: "Red (Crayola)",
+    r: 238,
+    g: 32,
+    b: 78,
+    group: "red"
+  },
+  {
+    name: "Red (Munsell)",
+    r: 242,
+    g: 0,
+    b: 60,
+    group: "red"
+  },
+  {
+    name: "Red (NCS)",
+    r: 196,
+    g: 2,
+    b: 52,
+    group: "red"
+  },
+  {
+    name: "Red (Pantone)",
+    r: 237,
+    g: 40,
+    b: 57,
+    group: "red"
+  },
+  {
+    name: "Redwood",
+    r: 171,
+    g: 78,
+    b: 82,
+    group: "red"
+  },
+  {
+    name: "Rojo",
+    r: 230,
+    g: 0,
+    b: 38,
+    group: "red"
+  },
+  {
+    name: "Rose",
+    r: 255,
+    g: 0,
+    b: 128,
+    group: "red"
+  },
+  {
+    name: "Rose ebony",
+    r: 103,
+    g: 72,
+    b: 70,
+    group: "red"
+  },
+  {
+    name: "Rose red",
+    r: 194,
+    g: 30,
+    b: 86,
+    group: "red"
+  },
+  {
+    name: "Rose taupe",
+    r: 144,
+    g: 93,
+    b: 93,
+    group: "red"
+  },
+  {
+    name: "Rose vale",
+    r: 171,
+    g: 78,
+    b: 82,
+    group: "red"
+  },
+  {
+    name: "Rosewood",
+    r: 101,
+    g: 0,
+    b: 11,
+    group: "red"
+  },
+  {
+    name: "Rosy brown",
+    r: 188,
+    g: 143,
+    b: 143,
+    group: "red"
+  },
+  {
+    name: "Rust",
+    r: 183,
+    g: 65,
+    b: 14,
+    group: "red"
+  },
+  {
+    name: "Rusty red",
+    r: 218,
+    g: 44,
+    b: 67,
+    group: "red"
+  },
+  {
+    name: "Salmon",
+    r: 250,
+    g: 128,
+    b: 114,
+    group: "red"
+  },
+  {
+    name: "Salmon pink",
+    r: 255,
+    g: 145,
+    b: 164,
+    group: "red"
+  },
+  {
+    name: "Scarlet",
+    r: 255,
+    g: 36,
+    b: 0,
+    group: "red"
+  },
+  {
+    name: "Syracuse Red Orange",
+    r: 212,
+    g: 69,
+    b: 0,
+    group: "red"
+  },
+  {
+    name: "Tea rose (red)",
+    r: 244,
+    g: 194,
+    b: 194,
+    group: "red"
+  },
+  {
+    name: "Tomato",
+    r: 255,
+    g: 99,
+    b: 71,
+    group: "red"
+  },
+  {
+    name: "Turkey red",
+    r: 169,
+    g: 17,
+    b: 1,
+    group: "red"
+  },
+  {
+    name: "Vermilion",
+    r: 227,
+    g: 66,
+    b: 52,
+    group: "red"
+  },
+  {
+    name: "Wine",
+    r: 114,
+    g: 47,
+    b: 55,
+    group: "red"
+  },
+  {
+    name: "Aerospace orange",
+    r: 255,
+    g: 79,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Alloy orange",
+    r: 196,
+    g: 98,
+    b: 16,
+    group: "orange"
+  },
+  {
+    name: "Amber",
+    r: 255,
+    g: 191,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Apricot",
+    r: 251,
+    g: 206,
+    b: 177,
+    group: "orange"
+  },
+  {
+    name: "Atomic tangerine",
+    r: 255,
+    g: 153,
+    b: 102,
+    group: "orange"
+  },
+  {
+    name: "Brown",
+    r: 150,
+    g: 75,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Burnt orange",
+    r: 191,
+    g: 87,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Butterscotch",
+    r: 224,
+    g: 149,
+    b: 64,
+    group: "orange"
+  },
+  {
+    name: "Carrot orange",
+    r: 237,
+    g: 145,
+    b: 33,
+    group: "orange"
+  },
+  {
+    name: "Champagne (color)",
+    r: 247,
+    g: 231,
+    b: 206,
+    group: "orange"
+  },
+  {
+    name: "Coral",
+    r: 255,
+    g: 127,
+    b: 80,
+    group: "orange"
+  },
+  {
+    name: "Dark orange (web)",
+    r: 255,
+    g: 140,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Desert sand (color)",
+    r: 237,
+    g: 201,
+    b: 175,
+    group: "orange"
+  },
+  {
+    name: "Engineering orange",
+    r: 186,
+    g: 22,
+    b: 12,
+    group: "orange"
+  },
+  {
+    name: "Flame",
+    r: 226,
+    g: 88,
+    b: 34,
+    group: "orange"
+  },
+  {
+    name: "Giants orange",
+    r: 254,
+    g: 90,
+    b: 29,
+    group: "orange"
+  },
+  {
+    name: "Gold",
+    r: 255,
+    g: 215,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Golden Gate Bridge",
+    r: 240,
+    g: 74,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Goldenrod",
+    r: 218,
+    g: 165,
+    b: 32,
+    group: "orange"
+  },
+  {
+    name: "Hunyadi yellow",
+    r: 232,
+    g: 172,
+    b: 65,
+    group: "orange"
+  },
+  {
+    name: "Light orange",
+    r: 254,
+    g: 216,
+    b: 177,
+    group: "orange"
+  },
+  {
+    name: "Mahogany",
+    r: 192,
+    g: 64,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Melon",
+    r: 253,
+    g: 188,
+    b: 180,
+    group: "orange"
+  },
+  {
+    name: "Orange (Crayola)",
+    r: 255,
+    g: 117,
+    b: 56,
+    group: "orange"
+  },
+  {
+    name: "Orange (Pantone)",
+    r: 255,
+    g: 88,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Orange peel",
+    r: 255,
+    g: 160,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Orange (web)",
+    r: 255,
+    g: 165,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Orange (wheel)",
+    r: 255,
+    g: 128,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Papaya whip",
+    r: 255,
+    g: 239,
+    b: 213,
+    group: "orange"
+  },
+  {
+    name: "Peach",
+    r: 255,
+    g: 229,
+    b: 180,
+    group: "orange"
+  },
+  {
+    name: "Persian orange",
+    r: 217,
+    g: 144,
+    b: 88,
+    group: "orange"
+  },
+  {
+    name: "Persimmon",
+    r: 236,
+    g: 88,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Princeton orange",
+    r: 255,
+    g: 143,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Pumpkin",
+    r: 255,
+    g: 117,
+    b: 24,
+    group: "orange"
+  },
+  {
+    name: "Safety orange",
+    r: 255,
+    g: 121,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Saffron",
+    r: 244,
+    g: 196,
+    b: 48,
+    group: "orange"
+  },
+  {
+    name: "Spanish orange",
+    r: 232,
+    g: 97,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Tangelo",
+    r: 249,
+    g: 77,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Tangerine",
+    r: 242,
+    g: 133,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Tawny",
+    r: 205,
+    g: 87,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Tiger’s Eye",
+    r: 181,
+    g: 105,
+    b: 23,
+    group: "orange"
+  },
+  {
+    name: "UT orange",
+    r: 255,
+    g: 130,
+    b: 0,
+    group: "orange"
+  },
+  {
+    name: "Xanthous",
+    r: 241,
+    g: 180,
+    b: 47,
+    group: "orange"
+  },
+  {
+    name: "Auburn",
+    r: 165,
+    g: 42,
+    b: 42,
+    group: "brown"
+  },
+  {
+    name: "Almond",
+    r: 239,
+    g: 222,
+    b: 205,
+    group: "brown"
+  },
+  {
+    name: "Beaver",
+    r: 159,
+    g: 129,
+    b: 112,
+    group: "brown"
+  },
+  {
+    name: "Beige",
+    r: 245,
+    g: 245,
+    b: 220,
+    group: "brown"
+  },
+  {
+    name: "Bistre",
+    r: 61,
+    g: 43,
+    b: 31,
+    group: "brown"
+  },
+  {
+    name: "Black bean",
+    r: 61,
+    g: 12,
+    b: 2,
+    group: "brown"
+  },
+  {
+    name: "Black olive",
+    r: 59,
+    g: 60,
+    b: 54,
+    group: "brown"
+  },
+  {
+    name: "Bole",
+    r: 121,
+    g: 68,
+    b: 59,
+    group: "brown"
+  },
+  {
+    name: "Bone",
+    r: 227,
+    g: 218,
+    b: 201,
+    group: "brown"
+  },
+  {
+    name: "Bronze",
+    r: 205,
+    g: 127,
+    b: 50,
+    group: "brown"
+  },
+  {
+    name: "Brown",
+    r: 153,
+    g: 51,
+    b: 0,
+    group: "brown"
+  },
+  {
+    name: "Brown sugar",
+    r: 175,
+    g: 110,
+    b: 77,
+    group: "brown"
+  },
+  {
+    name: "Buff",
+    r: 218,
+    g: 160,
+    b: 109,
+    group: "brown"
+  },
+  {
+    name: "Burgundy",
+    r: 128,
+    g: 0,
+    b: 32,
+    group: "brown"
+  },
+  {
+    name: "Burnt sienna",
+    r: 233,
+    g: 116,
+    b: 81,
+    group: "brown"
+  },
+  {
+    name: "Burnt umber",
+    r: 138,
+    g: 51,
+    b: 36,
+    group: "brown"
+  },
+  {
+    name: "Camel",
+    r: 193,
+    g: 154,
+    b: 107,
+    group: "brown"
+  },
+  {
+    name: "Caput mortuum",
+    r: 89,
+    g: 39,
+    b: 32,
+    group: "brown"
+  },
+  {
+    name: "Caramel",
+    r: 204,
+    g: 127,
+    b: 59,
+    group: "brown"
+  },
+  {
+    name: "Chamoisee",
+    r: 160,
+    g: 120,
+    b: 90,
+    group: "brown"
+  },
+  {
+    name: "Chestnut",
+    r: 149,
+    g: 69,
+    b: 53,
+    group: "brown"
+  },
+  {
+    name: "Chocolate",
+    r: 123,
+    g: 63,
+    b: 0,
+    group: "brown"
+  },
+  {
+    name: "Citron",
+    r: 221,
+    g: 208,
+    b: 106,
+    group: "brown"
+  },
+  {
+    name: "Cocoa Brown",
+    r: 210,
+    g: 105,
+    b: 30,
+    group: "brown"
+  },
+  {
+    name: "Coffee",
+    r: 111,
+    g: 78,
+    b: 55,
+    group: "brown"
+  },
+  {
+    name: "Copper",
+    r: 184,
+    g: 115,
+    b: 51,
+    group: "brown"
+  },
+  {
+    name: "Cordovan",
+    r: 137,
+    g: 63,
+    b: 69,
+    group: "brown"
+  },
+  {
+    name: "Coyote",
+    r: 129,
+    g: 97,
+    b: 62,
+    group: "brown"
+  },
+  {
+    name: "Desert sand",
+    r: 237,
+    g: 201,
+    b: 175,
+    group: "brown"
+  },
+  {
+    name: "Drab dark brown",
+    r: 74,
+    g: 65,
+    b: 42,
+    group: "brown"
+  },
+  {
+    name: "Dun",
+    r: 218,
+    g: 200,
+    b: 174,
+    group: "brown"
+  },
+  {
+    name: "Earth yellow",
+    r: 225,
+    g: 169,
+    b: 95,
+    group: "brown"
+  },
+  {
+    name: "Ecru",
+    r: 194,
+    g: 178,
+    b: 128,
+    group: "brown"
+  },
+  {
+    name: "Fallow",
+    r: 193,
+    g: 154,
+    b: 107,
+    group: "brown"
+  },
+  {
+    name: "Fawn",
+    r: 229,
+    g: 170,
+    b: 112,
+    group: "brown"
+  },
+  {
+    name: "Field drab",
+    r: 108,
+    g: 84,
+    b: 30,
+    group: "brown"
+  },
+  {
+    name: "Fulvous",
+    r: 228,
+    g: 132,
+    b: 0,
+    group: "brown"
+  },
+  {
+    name: "Golden brown",
+    r: 153,
+    g: 101,
+    b: 21,
+    group: "brown"
+  },
+  {
+    name: "Goldenrod",
+    r: 218,
+    g: 165,
+    b: 32,
+    group: "brown"
+  },
+  {
+    name: "Harvest gold",
+    r: 218,
+    g: 145,
+    b: 0,
+    group: "brown"
+  },
+  {
+    name: "Khaki",
+    r: 195,
+    g: 176,
+    b: 145,
+    group: "brown"
+  },
+  {
+    name: "Kobicha",
+    r: 107,
+    g: 68,
+    b: 35,
+    group: "brown"
+  },
+  {
+    name: "Lion",
+    r: 193,
+    g: 154,
+    b: 107,
+    group: "brown"
+  },
+  {
+    name: "Liver",
+    r: 103,
+    g: 76,
+    b: 71,
+    group: "brown"
+  },
+  {
+    name: "Mahogany",
+    r: 192,
+    g: 64,
+    b: 0,
+    group: "brown"
+  },
+  {
+    name: "Maroon",
+    r: 128,
+    g: 0,
+    b: 0,
+    group: "brown"
+  },
+  {
+    name: "Ochre",
+    r: 204,
+    g: 119,
+    b: 34,
+    group: "brown"
+  },
+  {
+    name: "Raw umber",
+    r: 146,
+    g: 102,
+    b: 68,
+    group: "brown"
+  },
+  {
+    name: "Red Brown",
+    r: 165,
+    g: 42,
+    b: 42,
+    group: "brown"
+  },
+  {
+    name: "Redwood",
+    r: 164,
+    g: 90,
+    b: 82,
+    group: "brown"
+  },
+  {
+    name: "Rufous",
+    r: 168,
+    g: 28,
+    b: 7,
+    group: "brown"
+  },
+  {
+    name: "Russet",
+    r: 128,
+    g: 70,
+    b: 27,
+    group: "brown"
+  },
+  {
+    name: "Rust",
+    r: 183,
+    g: 65,
+    b: 14,
+    group: "brown"
+  },
+  {
+    name: "Sand",
+    r: 194,
+    g: 178,
+    b: 128,
+    group: "brown"
+  },
+  {
+    name: "Sandy brown",
+    r: 244,
+    g: 164,
+    b: 96,
+    group: "brown"
+  },
+  {
+    name: "Satin sheen gold",
+    r: 203,
+    g: 161,
+    b: 53,
+    group: "brown"
+  },
+  {
+    name: "Seal brown",
+    r: 89,
+    g: 38,
+    b: 11,
+    group: "brown"
+  },
+  {
+    name: "Sepia",
+    r: 112,
+    g: 66,
+    b: 20,
+    group: "brown"
+  },
+  {
+    name: "Sienna",
+    r: 136,
+    g: 45,
+    b: 23,
+    group: "brown"
+  },
+  {
+    name: "Sinopia",
+    r: 203,
+    g: 65,
+    b: 11,
+    group: "brown"
+  },
+  {
+    name: "Tan",
+    r: 210,
+    g: 180,
+    b: 140,
+    group: "brown"
+  },
+  {
+    name: "Taupe",
+    r: 72,
+    g: 60,
+    b: 50,
+    group: "brown"
+  },
+  {
+    name: "Tawny",
+    r: 205,
+    g: 87,
+    b: 0,
+    group: "brown"
+  },
+  {
+    name: "Umber",
+    r: 99,
+    g: 81,
+    b: 71,
+    group: "brown"
+  },
+  {
+    name: "Van Dyke",
+    r: 68,
+    g: 54,
+    b: 47,
+    group: "brown"
+  },
+  {
+    name: "Walnut brown",
+    r: 92,
+    g: 82,
+    b: 72,
+    group: "brown"
+  },
+  {
+    name: "Wenge",
+    r: 100,
+    g: 84,
+    b: 82,
+    group: "brown"
+  },
+  {
+    name: "Wheat",
+    r: 245,
+    g: 222,
+    b: 179,
+    group: "brown"
+  },
+  {
+    name: "Amber",
+    r: 255,
+    g: 191,
+    b: 0,
+    group: "yellow"
+  },
+  {
+    name: "Apricot",
+    r: 251,
+    g: 206,
+    b: 177,
+    group: "yellow"
+  },
+  {
+    name: "Arylide yellow",
+    r: 233,
+    g: 214,
+    b: 107,
+    group: "yellow"
+  },
+  {
+    name: "Aureolin",
+    r: 253,
+    g: 238,
+    b: 0,
+    group: "yellow"
+  },
+  {
+    name: "Beige",
+    r: 245,
+    g: 245,
+    b: 220,
+    group: "yellow"
+  },
+  {
+    name: "Buff",
+    r: 224,
+    g: 171,
+    b: 118,
+    group: "yellow"
+  },
+  {
+    name: "Canary",
+    r: 255,
+    g: 239,
+    b: 0,
+    group: "yellow"
+  },
+  {
+    name: "Champagne",
+    r: 247,
+    g: 231,
+    b: 206,
+    group: "yellow"
+  },
+  {
+    name: "Chartreuse",
+    r: 223,
+    g: 255,
+    b: 0,
+    group: "yellow"
+  },
+  {
+    name: "Citron",
+    r: 221,
+    g: 208,
+    b: 106,
+    group: "yellow"
+  },
+  {
+    name: "Citrine",
+    r: 228,
+    g: 208,
+    b: 10,
+    group: "yellow"
+  },
+  {
+    name: "Cosmic latte",
+    r: 255,
+    g: 248,
+    b: 231,
+    group: "yellow"
+  },
+  {
+    name: "Cream",
+    r: 255,
+    g: 253,
+    b: 208,
+    group: "yellow"
+  },
+  {
+    name: "Dark goldenrod",
+    r: 184,
+    g: 134,
+    b: 11,
+    group: "yellow"
+  },
+  {
+    name: "Ecru",
+    r: 205,
+    g: 178,
+    b: 128,
+    group: "yellow"
+  },
+  {
+    name: "Flax",
+    r: 238,
+    g: 220,
+    b: 130,
+    group: "yellow"
+  },
+  {
+    name: "Gamboge",
+    r: 239,
+    g: 155,
+    b: 15,
+    group: "yellow"
+  },
+  {
+    name: "Gold",
+    r: 255,
+    g: 215,
+    b: 0,
+    group: "yellow"
+  },
+  {
+    name: "Gold (metallic)",
+    r: 212,
+    g: 175,
+    b: 55,
+    group: "yellow"
+  },
+  {
+    name: "Goldenrod",
+    r: 218,
+    g: 165,
+    b: 32,
+    group: "yellow"
+  },
+  {
+    name: "Harvest gold",
+    r: 230,
+    g: 168,
+    b: 23,
+    group: "yellow"
+  },
+  {
+    name: "Icterine",
+    r: 252,
+    g: 247,
+    b: 94,
+    group: "yellow"
+  },
+  {
+    name: "Ivory",
+    r: 255,
+    g: 255,
+    b: 240,
+    group: "yellow"
+  },
+  {
+    name: "Jasmine",
+    r: 248,
+    g: 222,
+    b: 126,
+    group: "yellow"
+  },
+  {
+    name: "Jonquil",
+    r: 250,
+    g: 202,
+    b: 22,
+    group: "yellow"
+  },
+  {
+    name: "Khaki",
+    r: 195,
+    g: 176,
+    b: 145,
+    group: "yellow"
+  },
+  {
+    name: "Lemon chiffon",
+    r: 255,
+    g: 250,
+    b: 205,
+    group: "yellow"
+  },
+  {
+    name: "Lemon Lime",
+    r: 227,
+    g: 255,
+    b: 0,
+    group: "yellow"
+  },
+  {
+    name: "Light yellow",
+    r: 255,
+    g: 255,
+    b: 224,
+    group: "yellow"
+  },
+  {
+    name: "Lion",
+    r: 193,
+    g: 154,
+    b: 107,
+    group: "yellow"
+  },
+  {
+    name: "Maize",
+    r: 251,
+    g: 236,
+    b: 93,
+    group: "yellow"
+  },
+  {
+    name: "Mikado yellow",
+    r: 255,
+    g: 196,
+    b: 12,
+    group: "yellow"
+  },
+  {
+    name: "Mindaro",
+    r: 227,
+    g: 249,
+    b: 136,
+    group: "yellow"
+  },
+  {
+    name: "Mustard",
+    r: 255,
+    g: 219,
+    b: 88,
+    group: "yellow"
+  },
+  {
+    name: "Naples yellow",
+    r: 250,
+    g: 218,
+    b: 94,
+    group: "yellow"
+  },
+  {
+    name: "Navajo white",
+    r: 255,
+    g: 222,
+    b: 173,
+    group: "yellow"
+  },
+  {
+    name: "Old gold",
+    r: 207,
+    g: 181,
+    b: 59,
+    group: "yellow"
+  },
+  {
+    name: "Olive",
+    r: 128,
+    g: 128,
+    b: 0,
+    group: "yellow"
+  },
+  {
+    name: "Papaya whip",
+    r: 255,
+    g: 239,
+    b: 213,
+    group: "yellow"
+  },
+  {
+    name: "Peach Yellow",
+    r: 250,
+    g: 223,
+    b: 173,
+    group: "yellow"
+  },
+  {
+    name: "Pear",
+    r: 209,
+    g: 226,
+    b: 49,
+    group: "yellow"
+  },
+  {
+    name: "Saffron",
+    r: 244,
+    g: 196,
+    b: 49,
+    group: "yellow"
+  },
+  {
+    name: "School bus yellow",
+    r: 255,
+    g: 216,
+    b: 0,
+    group: "yellow"
+  },
+  {
+    name: "Selective yellow",
+    r: 255,
+    g: 186,
+    b: 0,
+    group: "yellow"
+  },
+  {
+    name: "Stil de grain yellow",
+    r: 250,
+    g: 218,
+    b: 94,
+    group: "yellow"
+  },
+  {
+    name: "Straw",
+    r: 228,
+    g: 217,
+    b: 111,
+    group: "yellow"
+  },
+  {
+    name: "Sunglow",
+    r: 255,
+    g: 204,
+    b: 51,
+    group: "yellow"
+  },
+  {
+    name: "Sunset",
+    r: 250,
+    g: 214,
+    b: 165,
+    group: "yellow"
+  },
+  {
+    name: "Vanilla",
+    r: 243,
+    g: 229,
+    b: 171,
+    group: "yellow"
+  },
+  {
+    name: "Wheat",
+    r: 245,
+    g: 222,
+    b: 179,
+    group: "yellow"
+  },
+  {
+    name: "Yellow",
+    r: 255,
+    g: 255,
+    b: 0,
+    group: "yellow"
+  },
+  {
+    name: "Apple green",
+    r: 141,
+    g: 182,
+    b: 0,
+    group: "green"
+  },
+  {
+    name: "Aquamarine",
+    r: 0,
+    g: 255,
+    b: 191,
+    group: "green"
+  },
+  {
+    name: "Asparagus",
+    r: 123,
+    g: 160,
+    b: 91,
+    group: "green"
+  },
+  {
+    name: "Avocado",
+    r: 86,
+    g: 130,
+    b: 3,
+    group: "green"
+  },
+  {
+    name: "Bright green",
+    r: 102,
+    g: 255,
+    b: 0,
+    group: "green"
+  },
+  {
+    name: "British racing green",
+    r: 0,
+    g: 66,
+    b: 37,
+    group: "green"
+  },
+  {
+    name: "Brunswick green",
+    r: 27,
+    g: 77,
+    b: 62,
+    group: "green"
+  },
+  {
+    name: "Cal Poly green",
+    r: 30,
+    g: 77,
+    b: 43,
+    group: "green"
+  },
+  {
+    name: "Castleton green",
+    r: 0,
+    g: 86,
+    b: 59,
+    group: "green"
+  },
+  {
+    name: "Celadon",
+    r: 172,
+    g: 225,
+    b: 175,
+    group: "green"
+  },
+  {
+    name: "Chartreuse",
+    r: 128,
+    g: 255,
+    b: 0,
+    group: "green"
+  },
+  {
+    name: "Cyan",
+    r: 0,
+    g: 255,
+    b: 255,
+    group: "green"
+  },
+  {
+    name: "Dark green",
+    r: 1,
+    g: 50,
+    b: 32,
+    group: "green"
+  },
+  {
+    name: "Dark moss green",
+    r: 74,
+    g: 93,
+    b: 35,
+    group: "green"
+  },
+  {
+    name: "Dark pastel green",
+    r: 3,
+    g: 192,
+    b: 60,
+    group: "green"
+  },
+  {
+    name: "Dark spring green",
+    r: 23,
+    g: 114,
+    b: 69,
+    group: "green"
+  },
+  {
+    name: "Dartmouth green",
+    r: 0,
+    g: 105,
+    b: 62,
+    group: "green"
+  },
+  {
+    name: "Emerald",
+    r: 80,
+    g: 200,
+    b: 120,
+    group: "green"
+  },
+  {
+    name: "Erin",
+    r: 0,
+    g: 255,
+    b: 64,
+    group: "green"
+  },
+  {
+    name: "Fern green",
+    r: 79,
+    g: 121,
+    b: 66,
+    group: "green"
+  },
+  {
+    name: "Forest green",
+    r: 34,
+    g: 139,
+    b: 34,
+    group: "green"
+  },
+  {
+    name: "Green",
+    r: 0,
+    g: 255,
+    b: 0,
+    group: "green"
+  },
+  {
+    name: "Green Yellow",
+    r: 173,
+    g: 255,
+    b: 47,
+    group: "green"
+  },
+  {
+    name: "Harlequin",
+    r: 63,
+    g: 255,
+    b: 0,
+    group: "green"
+  },
+  {
+    name: "Honeydew",
+    r: 240,
+    g: 255,
+    b: 240,
+    group: "green"
+  },
+  {
+    name: "Hooker's green",
+    r: 73,
+    g: 121,
+    b: 107,
+    group: "green"
+  },
+  {
+    name: "Hunter green",
+    r: 53,
+    g: 94,
+    b: 59,
+    group: "green"
+  },
+  {
+    name: "India green",
+    r: 19,
+    g: 136,
+    b: 8,
+    group: "green"
+  },
+  {
+    name: "Islamic green",
+    r: 19,
+    g: 136,
+    b: 8,
+    group: "green"
+  },
+  {
+    name: "Jade",
+    r: 0,
+    g: 168,
+    b: 107,
+    group: "green"
+  },
+  {
+    name: "Jungle green",
+    r: 41,
+    g: 171,
+    b: 135,
+    group: "green"
+  },
+  {
+    name: "Kelly green",
+    r: 76,
+    g: 187,
+    b: 23,
+    group: "green"
+  },
+  {
+    name: "Lawn green",
+    r: 124,
+    g: 252,
+    b: 0,
+    group: "green"
+  },
+  {
+    name: "Light green",
+    r: 144,
+    g: 238,
+    b: 144,
+    group: "green"
+  },
+  {
+    name: "Lime",
+    r: 192,
+    g: 255,
+    b: 0,
+    group: "green"
+  },
+  {
+    name: "Lime green",
+    r: 50,
+    g: 205,
+    b: 50,
+    group: "green"
+  },
+  {
+    name: "Malachite",
+    r: 11,
+    g: 218,
+    b: 81,
+    group: "green"
+  },
+  {
+    name: "Mantis",
+    r: 116,
+    g: 195,
+    b: 101,
+    group: "green"
+  },
+  {
+    name: "Midnight green",
+    r: 0,
+    g: 73,
+    b: 83,
+    group: "green"
+  },
+  {
+    name: "Mindaro",
+    r: 227,
+    g: 249,
+    b: 136,
+    group: "green"
+  },
+  {
+    name: "Mint",
+    r: 62,
+    g: 180,
+    b: 137,
+    group: "green"
+  },
+  {
+    name: "Moss green",
+    r: 138,
+    g: 154,
+    b: 91,
+    group: "green"
+  },
+  {
+    name: "Myrtle green",
+    r: 49,
+    g: 120,
+    b: 115,
+    group: "green"
+  },
+  {
+    name: "Neon green",
+    r: 57,
+    g: 255,
+    b: 20,
+    group: "green"
+  },
+  {
+    name: "Office green",
+    r: 0,
+    g: 128,
+    b: 0,
+    group: "green"
+  },
+  {
+    name: "Olive",
+    r: 128,
+    g: 128,
+    b: 0,
+    group: "green"
+  },
+  {
+    name: "Olivine",
+    r: 154,
+    g: 185,
+    b: 115,
+    group: "green"
+  },
+  {
+    name: "Pakistan green",
+    r: 0,
+    g: 64,
+    b: 26,
+    group: "green"
+  },
+  {
+    name: "Paris green",
+    r: 80,
+    g: 200,
+    b: 120,
+    group: "green"
+  },
+  {
+    name: "Pear",
+    r: 209,
+    g: 226,
+    b: 49,
+    group: "green"
+  },
+  {
+    name: "Persian green",
+    r: 0,
+    g: 166,
+    b: 147,
+    group: "green"
+  },
+  {
+    name: "Pigment green",
+    r: 0,
+    g: 165,
+    b: 80,
+    group: "green"
+  },
+  {
+    name: "Pine green",
+    r: 1,
+    g: 121,
+    b: 111,
+    group: "green"
+  },
+  {
+    name: "Pistachio",
+    r: 147,
+    g: 197,
+    b: 114,
+    group: "green"
+  },
+  {
+    name: "Reseda green",
+    r: 108,
+    g: 124,
+    b: 89,
+    group: "green"
+  },
+  {
+    name: "Robin egg blue",
+    r: 0,
+    g: 204,
+    b: 204,
+    group: "green"
+  },
+  {
+    name: "Sage",
+    r: 188,
+    g: 184,
+    b: 138,
+    group: "green"
+  },
+  {
+    name: "Screamin' green",
+    r: 118,
+    g: 255,
+    b: 122,
+    group: "green"
+  },
+  {
+    name: "Sea green",
+    r: 46,
+    g: 139,
+    b: 87,
+    group: "green"
+  },
+  {
+    name: "SGBUS green",
+    r: 85,
+    g: 221,
+    b: 51,
+    group: "green"
+  },
+  {
+    name: "Shamrock green",
+    r: 0,
+    g: 158,
+    b: 96,
+    group: "green"
+  },
+  {
+    name: "Spring bud",
+    r: 167,
+    g: 252,
+    b: 0,
+    group: "green"
+  },
+  {
+    name: "Spring green",
+    r: 0,
+    g: 255,
+    b: 127,
+    group: "green"
+  },
+  {
+    name: "Tea green",
+    r: 208,
+    g: 240,
+    b: 192,
+    group: "green"
+  },
+  {
+    name: "Teal",
+    r: 0,
+    g: 128,
+    b: 128,
+    group: "green"
+  },
+  {
+    name: "Turquoise",
+    r: 64,
+    g: 224,
+    b: 208,
+    group: "green"
+  },
+  {
+    name: "Viridian",
+    r: 64,
+    g: 130,
+    b: 109,
+    group: "green"
+  },
+  {
+    name: "Yellow Green",
+    r: 154,
+    g: 205,
+    b: 50,
+    group: "green"
+  },
+  {
+    name: "Alice blue",
+    r: 240,
+    g: 248,
+    b: 255,
+    group: "turquoise"
+  },
+  {
+    name: "Aqua",
+    r: 15,
+    g: 255,
+    b: 255,
+    group: "turquoise"
+  },
+  {
+    name: "Aquamarine",
+    r: 127,
+    g: 255,
+    b: 212,
+    group: "turquoise"
+  },
+  {
+    name: "Azure",
+    r: 0,
+    g: 127,
+    b: 255,
+    group: "turquoise"
+  },
+  {
+    name: "Azure (web)",
+    r: 240,
+    g: 255,
+    b: 255,
+    group: "turquoise"
+  },
+  {
+    name: "Blue Green",
+    r: 13,
+    g: 152,
+    b: 186,
+    group: "turquoise"
+  },
+  {
+    name: "Capri",
+    r: 0,
+    g: 191,
+    b: 255,
+    group: "turquoise"
+  },
+  {
+    name: "Caribbean Current",
+    r: 0,
+    g: 109,
+    b: 111,
+    group: "turquoise"
+  },
+  {
+    name: "Celeste",
+    r: 178,
+    g: 255,
+    b: 255,
+    group: "turquoise"
+  },
+  {
+    name: "Cerulean",
+    r: 0,
+    g: 123,
+    b: 167,
+    group: "turquoise"
+  },
+  {
+    name: "Cyan (RGB)",
+    r: 0,
+    g: 255,
+    b: 255,
+    group: "turquoise"
+  },
+  {
+    name: "Dark cyan",
+    r: 0,
+    g: 139,
+    b: 139,
+    group: "turquoise"
+  },
+  {
+    name: "Electric blue",
+    r: 125,
+    g: 249,
+    b: 255,
+    group: "turquoise"
+  },
+  {
+    name: "Fluorescent cyan",
+    r: 21,
+    g: 244,
+    b: 238,
+    group: "turquoise"
+  },
+  {
+    name: "Jungle green",
+    r: 41,
+    g: 171,
+    b: 135,
+    group: "turquoise"
+  },
+  {
+    name: "Keppel",
+    r: 58,
+    g: 176,
+    b: 158,
+    group: "turquoise"
+  },
+  {
+    name: "Ice blue",
+    r: 153,
+    g: 255,
+    b: 255,
+    group: "turquoise"
+  },
+  {
+    name: "Light cyan",
+    r: 224,
+    g: 255,
+    b: 255,
+    group: "turquoise"
+  },
+  {
+    name: "Light sea green",
+    r: 32,
+    g: 178,
+    b: 170,
+    group: "turquoise"
+  },
+  {
+    name: "Mint green",
+    r: 223,
+    g: 255,
+    b: 253,
+    group: "turquoise"
+  },
+  {
+    name: "Mint",
+    r: 62,
+    g: 180,
+    b: 137,
+    group: "turquoise"
+  },
+  {
+    name: "Moonstone",
+    r: 58,
+    g: 168,
+    b: 193,
+    group: "turquoise"
+  },
+  {
+    name: "Myrtle Green",
+    r: 49,
+    g: 120,
+    b: 115,
+    group: "turquoise"
+  },
+  {
+    name: "Pacific cyan",
+    r: 28,
+    g: 169,
+    b: 201,
+    group: "turquoise"
+  },
+  {
+    name: "Persian green",
+    r: 0,
+    g: 166,
+    b: 147,
+    group: "turquoise"
+  },
+  {
+    name: "Pine green",
+    r: 1,
+    g: 121,
+    b: 111,
+    group: "turquoise"
+  },
+  {
+    name: "Process Cyan",
+    r: 0,
+    g: 183,
+    b: 235,
+    group: "turquoise"
+  },
+  {
+    name: "Robin egg blue",
+    r: 0,
+    g: 204,
+    b: 204,
+    group: "turquoise"
+  },
+  {
+    name: "Sea green",
+    r: 46,
+    g: 139,
+    b: 87,
+    group: "turquoise"
+  },
+  {
+    name: "Skobeloff",
+    r: 0,
+    g: 122,
+    b: 116,
+    group: "turquoise"
+  },
+  {
+    name: "Sky blue (Crayola)",
+    r: 223,
+    g: 255,
+    b: 253,
+    group: "turquoise"
+  },
+  {
+    name: "Spring green",
+    r: 0,
+    g: 255,
+    b: 127,
+    group: "turquoise"
+  },
+  {
+    name: "Teal",
+    r: 0,
+    g: 128,
+    b: 128,
+    group: "turquoise"
+  },
+  {
+    name: "Tiffany Blue",
+    r: 129,
+    g: 216,
+    b: 208,
+    group: "turquoise"
+  },
+  {
+    name: "Turquoise",
+    r: 64,
+    g: 224,
+    b: 208,
+    group: "turquoise"
+  },
+  {
+    name: "Verdigris",
+    r: 67,
+    g: 179,
+    b: 174,
+    group: "turquoise"
+  },
+  {
+    name: "Vivid sky blue",
+    r: 0,
+    g: 204,
+    b: 255,
+    group: "turquoise"
+  },
+  {
+    name: "Zomp",
+    r: 57,
+    g: 167,
+    b: 141,
+    group: "turquoise"
+  },
+  {
+    name: "Aero",
+    r: 0,
+    g: 185,
+    b: 232,
+    group: "blue"
+  },
+  {
+    name: "Air Force blue",
+    r: 93,
+    g: 138,
+    b: 168,
+    group: "blue"
+  },
+  {
+    name: "Air superiority blue",
+    r: 114,
+    g: 160,
+    b: 193,
+    group: "blue"
+  },
+  {
+    name: "Alice Blue",
+    r: 240,
+    g: 248,
+    b: 255,
+    group: "blue"
+  },
+  {
+    name: "Argentinian Blue",
+    r: 108,
+    g: 180,
+    b: 238,
+    group: "blue"
+  },
+  {
+    name: "Azure",
+    r: 0,
+    g: 127,
+    b: 255,
+    group: "blue"
+  },
+  {
+    name: "Azul",
+    r: 0,
+    g: 112,
+    b: 187,
+    group: "blue"
+  },
+  {
+    name: "Baby blue",
+    r: 137,
+    g: 207,
+    b: 240,
+    group: "blue"
+  },
+  {
+    name: "Berkeley Blue",
+    r: 0,
+    g: 50,
+    b: 98,
+    group: "blue"
+  },
+  {
+    name: "Bice blue",
+    r: 32,
+    g: 114,
+    b: 175,
+    group: "blue"
+  },
+  {
+    name: "Bleu de France",
+    r: 49,
+    g: 140,
+    b: 231,
+    group: "blue"
+  },
+  {
+    name: "Blue",
+    r: 0,
+    g: 0,
+    b: 255,
+    group: "blue"
+  },
+  {
+    name: "Blue Gray",
+    r: 102,
+    g: 153,
+    b: 204,
+    group: "blue"
+  },
+  {
+    name: "Bondi blue",
+    r: 0,
+    g: 149,
+    b: 182,
+    group: "blue"
+  },
+  {
+    name: "Brandeis blue",
+    r: 0,
+    g: 112,
+    b: 255,
+    group: "blue"
+  },
+  {
+    name: "Byzantine blue",
+    r: 52,
+    g: 87,
+    b: 213,
+    group: "blue"
+  },
+  {
+    name: "Cambridge blue",
+    r: 133,
+    g: 176,
+    b: 154,
+    group: "blue"
+  },
+  {
+    name: "Carolina blue",
+    r: 123,
+    g: 175,
+    b: 212,
+    group: "blue"
+  },
+  {
+    name: "Celestial Blue",
+    r: 73,
+    g: 151,
+    b: 208,
+    group: "blue"
+  },
+  {
+    name: "Celtic Blue",
+    r: 36,
+    g: 107,
+    b: 206,
+    group: "blue"
+  },
+  {
+    name: "Cerulean",
+    r: 0,
+    g: 123,
+    b: 167,
+    group: "blue"
+  },
+  {
+    name: "Chefchaouen Blue",
+    r: 70,
+    g: 143,
+    b: 234,
+    group: "blue"
+  },
+  {
+    name: "Chrysler blue",
+    r: 59,
+    g: 0,
+    b: 219,
+    group: "blue"
+  },
+  {
+    name: "Cobalt blue",
+    r: 0,
+    g: 71,
+    b: 171,
+    group: "blue"
+  },
+  {
+    name: "Columbia blue",
+    r: 185,
+    g: 217,
+    b: 235,
+    group: "blue"
+  },
+  {
+    name: "Cornflower blue",
+    r: 100,
+    g: 149,
+    b: 237,
+    group: "blue"
+  },
+  {
+    name: "Blue (Crayola)",
+    r: 31,
+    g: 117,
+    b: 254,
+    group: "blue"
+  },
+  {
+    name: "Dark blue",
+    r: 0,
+    g: 0,
+    b: 184,
+    group: "blue"
+  },
+  {
+    name: "Deep Sky Blue",
+    r: 0,
+    g: 191,
+    b: 255,
+    group: "blue"
+  },
+  {
+    name: "Delft Blue",
+    r: 31,
+    g: 48,
+    b: 94,
+    group: "blue"
+  },
+  {
+    name: "Denim",
+    r: 21,
+    g: 96,
+    b: 189,
+    group: "blue"
+  },
+  {
+    name: "Dodger blue",
+    r: 30,
+    g: 144,
+    b: 255,
+    group: "blue"
+  },
+  {
+    name: "Duke blue",
+    r: 0,
+    g: 0,
+    b: 156,
+    group: "blue"
+  },
+  {
+    name: "Egyptian blue",
+    r: 16,
+    g: 52,
+    b: 166,
+    group: "blue"
+  },
+  {
+    name: "Federal blue",
+    r: 22,
+    g: 22,
+    b: 107,
+    group: "blue"
+  },
+  {
+    name: "Glaucous",
+    r: 96,
+    g: 130,
+    b: 182,
+    group: "blue"
+  },
+  {
+    name: "Green Blue",
+    r: 17,
+    g: 100,
+    b: 180,
+    group: "blue"
+  },
+  {
+    name: "Electric indigo",
+    r: 111,
+    g: 0,
+    b: 255,
+    group: "blue"
+  },
+  {
+    name: "French Blue",
+    r: 0,
+    g: 114,
+    b: 187,
+    group: "blue"
+  },
+  {
+    name: "Ice blue",
+    r: 153,
+    g: 255,
+    b: 255,
+    group: "blue"
+  },
+  {
+    name: "Indigo",
+    r: 75,
+    g: 0,
+    b: 130,
+    group: "blue"
+  },
+  {
+    name: "Indigo dye",
+    r: 0,
+    g: 65,
+    b: 106,
+    group: "blue"
+  },
+  {
+    name: "International Klein Blue",
+    r: 0,
+    g: 47,
+    b: 167,
+    group: "blue"
+  },
+  {
+    name: "Jordy Blue",
+    r: 138,
+    g: 185,
+    b: 241,
+    group: "blue"
+  },
+  {
+    name: "Lapis Lazuli",
+    r: 38,
+    g: 97,
+    b: 156,
+    group: "blue"
+  },
+  {
+    name: "Light blue",
+    r: 173,
+    g: 216,
+    b: 230,
+    group: "blue"
+  },
+  {
+    name: "Light Sky Blue",
+    r: 227,
+    g: 240,
+    b: 252,
+    group: "blue"
+  },
+  {
+    name: "Majorelle Blue",
+    r: 96,
+    g: 80,
+    b: 220,
+    group: "blue"
+  },
+  {
+    name: "Marian blue",
+    r: 43,
+    g: 69,
+    b: 147,
+    group: "blue"
+  },
+  {
+    name: "Maya blue",
+    r: 115,
+    g: 194,
+    b: 251,
+    group: "blue"
+  },
+  {
+    name: "Medium blue",
+    r: 0,
+    g: 0,
+    b: 205,
+    group: "blue"
+  },
+  {
+    name: "Medium slate blue",
+    r: 123,
+    g: 104,
+    b: 238,
+    group: "blue"
+  },
+  {
+    name: "Midnight blue",
+    r: 25,
+    g: 25,
+    b: 112,
+    group: "blue"
+  },
+  {
+    name: "Blue (Munsell)",
+    r: 0,
+    g: 147,
+    b: 175,
+    group: "blue"
+  },
+  {
+    name: "Navy blue",
+    r: 0,
+    g: 0,
+    b: 128,
+    group: "blue"
+  },
+  {
+    name: "Blue (NCS)",
+    r: 0,
+    g: 135,
+    b: 189,
+    group: "blue"
+  },
+  {
+    name: "Neon blue",
+    r: 70,
+    g: 102,
+    b: 255,
+    group: "blue"
+  },
+  {
+    name: "Non Photo blue",
+    r: 164,
+    g: 221,
+    b: 237,
+    group: "blue"
+  },
+  {
+    name: "Oxford Blue",
+    r: 0,
+    g: 33,
+    b: 71,
+    group: "blue"
+  },
+  {
+    name: "Palatinate blue",
+    r: 39,
+    g: 59,
+    b: 226,
+    group: "blue"
+  },
+  {
+    name: "Pale azure",
+    r: 135,
+    g: 211,
+    b: 248,
+    group: "blue"
+  },
+  {
+    name: "Penn Blue",
+    r: 1,
+    g: 31,
+    b: 91,
+    group: "blue"
+  },
+  {
+    name: "Periwinkle",
+    r: 204,
+    g: 204,
+    b: 255,
+    group: "blue"
+  },
+  {
+    name: "Persian blue",
+    r: 28,
+    g: 57,
+    b: 187,
+    group: "blue"
+  },
+  {
+    name: "Phthalo blue",
+    r: 0,
+    g: 15,
+    b: 137,
+    group: "blue"
+  },
+  {
+    name: "Picton Blue",
+    r: 69,
+    g: 177,
+    b: 232,
+    group: "blue"
+  },
+  {
+    name: "Polynesian blue",
+    r: 34,
+    g: 76,
+    b: 152,
+    group: "blue"
+  },
+  {
+    name: "Powder blue",
+    r: 158,
+    g: 185,
+    b: 212,
+    group: "blue"
+  },
+  {
+    name: "Prussian blue",
+    r: 0,
+    g: 49,
+    b: 83,
+    group: "blue"
+  },
+  {
+    name: "Resolution Blue",
+    r: 0,
+    g: 35,
+    b: 135,
+    group: "blue"
+  },
+  {
+    name: "RISD Blue",
+    r: 36,
+    g: 84,
+    b: 255,
+    group: "blue"
+  },
+  {
+    name: "Royal Blue (web color)",
+    r: 65,
+    g: 105,
+    b: 225,
+    group: "blue"
+  },
+  {
+    name: "Royal blue (traditional)",
+    r: 0,
+    g: 35,
+    b: 102,
+    group: "blue"
+  },
+  {
+    name: "Ruddy Blue",
+    r: 118,
+    g: 171,
+    b: 223,
+    group: "blue"
+  },
+  {
+    name: "Sapphire",
+    r: 15,
+    g: 82,
+    b: 186,
+    group: "blue"
+  },
+  {
+    name: "Honolulu Blue",
+    r: 0,
+    g: 118,
+    b: 182,
+    group: "blue"
+  },
+  {
+    name: "Savoy blue",
+    r: 75,
+    g: 97,
+    b: 209,
+    group: "blue"
+  },
+  {
+    name: "Silver Lake Blue",
+    r: 93,
+    g: 137,
+    b: 186,
+    group: "blue"
+  },
+  {
+    name: "Sky blue",
+    r: 135,
+    g: 206,
+    b: 235,
+    group: "blue"
+  },
+  {
+    name: "Light sky blue",
+    r: 227,
+    g: 240,
+    b: 252,
+    group: "blue"
+  },
+  {
+    name: "Space cadet",
+    r: 30,
+    g: 41,
+    b: 82,
+    group: "blue"
+  },
+  {
+    name: "Steel blue",
+    r: 70,
+    g: 130,
+    b: 180,
+    group: "blue"
+  },
+  {
+    name: "Tang Blue",
+    r: 0,
+    g: 89,
+    b: 207,
+    group: "blue"
+  },
+  {
+    name: "True Blue",
+    r: 45,
+    g: 104,
+    b: 196,
+    group: "blue"
+  },
+  {
+    name: "Tufts Blue",
+    r: 62,
+    g: 142,
+    b: 222,
+    group: "blue"
+  },
+  {
+    name: "UCLA Blue",
+    r: 39,
+    g: 116,
+    b: 174,
+    group: "blue"
+  },
+  {
+    name: "Ultramarine",
+    r: 18,
+    g: 10,
+    b: 143,
+    group: "blue"
+  },
+  {
+    name: "United Nations Blue",
+    r: 75,
+    g: 146,
+    b: 219,
+    group: "blue"
+  },
+  {
+    name: "Uranian Blue",
+    r: 175,
+    g: 219,
+    b: 245,
+    group: "blue"
+  },
+  {
+    name: "Violet Blue",
+    r: 50,
+    g: 74,
+    b: 178,
+    group: "blue"
+  },
+  {
+    name: "Vista Blue",
+    r: 124,
+    g: 158,
+    b: 217,
+    group: "blue"
+  },
+  {
+    name: "Yale Blue",
+    r: 0,
+    g: 53,
+    b: 107,
+    group: "blue"
+  },
+  {
+    name: "YInMn Blue",
+    r: 46,
+    g: 80,
+    b: 144,
+    group: "blue"
+  },
+  {
+    name: "Zaffre",
+    r: 0,
+    g: 20,
+    b: 168,
+    group: "blue"
+  },
+  {
+    name: "African violet",
+    r: 178,
+    g: 132,
+    b: 190,
+    group: "purple"
+  },
+  {
+    name: "Amethyst",
+    r: 153,
+    g: 102,
+    b: 204,
+    group: "purple"
+  },
+  {
+    name: "Blue Violet",
+    r: 138,
+    g: 43,
+    b: 226,
+    group: "purple"
+  },
+  {
+    name: "Burgundy",
+    r: 128,
+    g: 0,
+    b: 32,
+    group: "purple"
+  },
+  {
+    name: "Byzantium",
+    r: 112,
+    g: 41,
+    b: 99,
+    group: "purple"
+  },
+  {
+    name: "Caput mortuum",
+    r: 89,
+    g: 39,
+    b: 32,
+    group: "purple"
+  },
+  {
+    name: "Cerise",
+    r: 222,
+    g: 49,
+    b: 99,
+    group: "purple"
+  },
+  {
+    name: "Chinese violet",
+    r: 133,
+    g: 96,
+    b: 136,
+    group: "purple"
+  },
+  {
+    name: "Dark purple",
+    r: 48,
+    g: 25,
+    b: 52,
+    group: "purple"
+  },
+  {
+    name: "Dark violet",
+    r: 148,
+    g: 0,
+    b: 211,
+    group: "purple"
+  },
+  {
+    name: "Eggplant",
+    r: 97,
+    g: 64,
+    b: 81,
+    group: "purple"
+  },
+  {
+    name: "Electric indigo",
+    r: 111,
+    g: 0,
+    b: 255,
+    group: "purple"
+  },
+  {
+    name: "Electric purple",
+    r: 191,
+    g: 0,
+    b: 255,
+    group: "purple"
+  },
+  {
+    name: "Electric violet",
+    r: 143,
+    g: 0,
+    b: 255,
+    group: "purple"
+  },
+  {
+    name: "English violet",
+    r: 86,
+    g: 60,
+    b: 92,
+    group: "purple"
+  },
+  {
+    name: "Eminence",
+    r: 108,
+    g: 48,
+    b: 130,
+    group: "purple"
+  },
+  {
+    name: "Fairy Tale",
+    r: 242,
+    g: 193,
+    b: 209,
+    group: "purple"
+  },
+  {
+    name: "Fandango",
+    r: 181,
+    g: 51,
+    b: 137,
+    group: "purple"
+  },
+  {
+    name: "French mauve",
+    r: 212,
+    g: 115,
+    b: 212,
+    group: "purple"
+  },
+  {
+    name: "French violet",
+    r: 136,
+    g: 6,
+    b: 206,
+    group: "purple"
+  },
+  {
+    name: "Fuchsia",
+    r: 255,
+    g: 0,
+    b: 255,
+    group: "purple"
+  },
+  {
+    name: "Grape",
+    r: 111,
+    g: 45,
+    b: 168,
+    group: "purple"
+  },
+  {
+    name: "Heliotrope",
+    r: 223,
+    g: 115,
+    b: 255,
+    group: "purple"
+  },
+  {
+    name: "Indigo",
+    r: 75,
+    g: 0,
+    b: 130,
+    group: "purple"
+  },
+  {
+    name: "Iris",
+    r: 90,
+    g: 79,
+    b: 207,
+    group: "purple"
+  },
+  {
+    name: "Japanese violet",
+    r: 91,
+    g: 50,
+    b: 86,
+    group: "purple"
+  },
+  {
+    name: "Lavender blush",
+    r: 255,
+    g: 240,
+    b: 245,
+    group: "purple"
+  },
+  {
+    name: "Lavender (floral)",
+    r: 181,
+    g: 126,
+    b: 220,
+    group: "purple"
+  },
+  {
+    name: "Lavender (web)",
+    r: 230,
+    g: 230,
+    b: 250,
+    group: "purple"
+  },
+  {
+    name: "Lilac",
+    r: 200,
+    g: 162,
+    b: 200,
+    group: "purple"
+  },
+  {
+    name: "Majorelle Blue",
+    r: 96,
+    g: 80,
+    b: 220,
+    group: "purple"
+  },
+  {
+    name: "Magenta",
+    r: 255,
+    g: 0,
+    b: 255,
+    group: "purple"
+  },
+  {
+    name: "Mardi Gras",
+    r: 136,
+    g: 0,
+    b: 133,
+    group: "purple"
+  },
+  {
+    name: "Mauve",
+    r: 224,
+    g: 176,
+    b: 255,
+    group: "purple"
+  },
+  {
+    name: "Mauveine",
+    r: 141,
+    g: 2,
+    b: 155,
+    group: "purple"
+  },
+  {
+    name: "Medium slate blue",
+    r: 123,
+    g: 104,
+    b: 238,
+    group: "purple"
+  },
+  {
+    name: "Mountbatten pink",
+    r: 153,
+    g: 122,
+    b: 141,
+    group: "purple"
+  },
+  {
+    name: "Mulberry",
+    r: 197,
+    g: 75,
+    b: 140,
+    group: "purple"
+  },
+  {
+    name: "Murrey",
+    r: 139,
+    g: 0,
+    b: 75,
+    group: "purple"
+  },
+  {
+    name: "Orchid",
+    r: 218,
+    g: 112,
+    b: 214,
+    group: "purple"
+  },
+  {
+    name: "Palatinate",
+    r: 104,
+    g: 40,
+    b: 96,
+    group: "purple"
+  },
+  {
+    name: "Pale purple",
+    r: 250,
+    g: 230,
+    b: 250,
+    group: "purple"
+  },
+  {
+    name: "Periwinkle",
+    r: 204,
+    g: 204,
+    b: 255,
+    group: "purple"
+  },
+  {
+    name: "Persian indigo",
+    r: 50,
+    g: 18,
+    b: 122,
+    group: "purple"
+  },
+  {
+    name: "Phlox",
+    r: 223,
+    g: 0,
+    b: 255,
+    group: "purple"
+  },
+  {
+    name: "Pink lavender",
+    r: 219,
+    g: 178,
+    b: 209,
+    group: "purple"
+  },
+  {
+    name: "Plum (web)",
+    r: 221,
+    g: 160,
+    b: 221,
+    group: "purple"
+  },
+  {
+    name: "Pomp and Power",
+    r: 134,
+    g: 96,
+    b: 142,
+    group: "purple"
+  },
+  {
+    name: "Puce",
+    r: 204,
+    g: 136,
+    b: 153,
+    group: "purple"
+  },
+  {
+    name: "Purple",
+    r: 128,
+    g: 0,
+    b: 128,
+    group: "purple"
+  },
+  {
+    name: "Purpureus",
+    r: 154,
+    g: 78,
+    b: 174,
+    group: "purple"
+  },
+  {
+    name: "Rebecca purple",
+    r: 102,
+    g: 51,
+    b: 153,
+    group: "purple"
+  },
+  {
+    name: "Royal purple",
+    r: 120,
+    g: 81,
+    b: 169,
+    group: "purple"
+  },
+  {
+    name: "Red Violet",
+    r: 199,
+    g: 21,
+    b: 133,
+    group: "purple"
+  },
+  {
+    name: "Russian violet",
+    r: 50,
+    g: 23,
+    b: 77,
+    group: "purple"
+  },
+  {
+    name: "Slate blue",
+    r: 106,
+    g: 90,
+    b: 205,
+    group: "purple"
+  },
+  {
+    name: "Steel pink",
+    r: 204,
+    g: 51,
+    b: 204,
+    group: "purple"
+  },
+  {
+    name: "Tekhelet",
+    r: 81,
+    g: 40,
+    b: 136,
+    group: "purple"
+  },
+  {
+    name: "Thistle",
+    r: 216,
+    g: 191,
+    b: 216,
+    group: "purple"
+  },
+  {
+    name: "Tropical indigo",
+    r: 150,
+    g: 131,
+    b: 236,
+    group: "purple"
+  },
+  {
+    name: "Tyrian purple",
+    r: 102,
+    g: 2,
+    b: 60,
+    group: "purple"
+  },
+  {
+    name: "Ultra Violet",
+    r: 100,
+    g: 83,
+    b: 148,
+    group: "purple"
+  },
+  {
+    name: "Veronica",
+    r: 160,
+    g: 32,
+    b: 240,
+    group: "purple"
+  },
+  {
+    name: "Violet",
+    r: 128,
+    g: 0,
+    b: 255,
+    group: "purple"
+  },
+  {
+    name: "Wisteria",
+    r: 201,
+    g: 160,
+    b: 220,
+    group: "purple"
+  },
+  {
+    name: "African Violet",
+    r: 178,
+    g: 132,
+    b: 190,
+    group: "pink"
+  },
+  {
+    name: "Amaranth",
+    r: 229,
+    g: 43,
+    b: 80,
+    group: "pink"
+  },
+  {
+    name: "Amaranth purple",
+    r: 171,
+    g: 39,
+    b: 79,
+    group: "pink"
+  },
+  {
+    name: "Baker-Miller Pink",
+    r: 255,
+    g: 145,
+    b: 175,
+    group: "pink"
+  },
+  {
+    name: "Cerise",
+    r: 222,
+    g: 49,
+    b: 99,
+    group: "pink"
+  },
+  {
+    name: "Chinese Violet",
+    r: 133,
+    g: 96,
+    b: 136,
+    group: "pink"
+  },
+  {
+    name: "Crimson",
+    r: 220,
+    g: 20,
+    b: 60,
+    group: "pink"
+  },
+  {
+    name: "Dark Magenta",
+    r: 139,
+    g: 0,
+    b: 139,
+    group: "pink"
+  },
+  {
+    name: "Eggplant",
+    r: 97,
+    g: 64,
+    b: 81,
+    group: "pink"
+  },
+  {
+    name: "English Violet",
+    r: 86,
+    g: 60,
+    b: 92,
+    group: "pink"
+  },
+  {
+    name: "Fandango",
+    r: 181,
+    g: 51,
+    b: 137,
+    group: "pink"
+  },
+  {
+    name: "Finn",
+    r: 104,
+    g: 48,
+    b: 104,
+    group: "pink"
+  },
+  {
+    name: "Fuchsia",
+    r: 255,
+    g: 0,
+    b: 255,
+    group: "pink"
+  },
+  {
+    name: "Hot magenta",
+    r: 255,
+    g: 29,
+    b: 206,
+    group: "pink"
+  },
+  {
+    name: "Magenta dye",
+    r: 202,
+    g: 31,
+    b: 123,
+    group: "pink"
+  },
+  {
+    name: "Magenta (CMYK)",
+    r: 255,
+    g: 0,
+    b: 144,
+    group: "pink"
+  },
+  {
+    name: "Magenta (RGB)",
+    r: 255,
+    g: 0,
+    b: 255,
+    group: "pink"
+  },
+  {
+    name: "Magenta (Crayola)",
+    r: 246,
+    g: 83,
+    b: 166,
+    group: "pink"
+  },
+  {
+    name: "Magenta (Pantone)",
+    r: 208,
+    g: 65,
+    b: 126,
+    group: "pink"
+  },
+  {
+    name: "Magenta haze",
+    r: 159,
+    g: 69,
+    b: 118,
+    group: "pink"
+  },
+  {
+    name: "Mulberry",
+    r: 197,
+    g: 75,
+    b: 140,
+    group: "pink"
+  },
+  {
+    name: "Orchid",
+    r: 218,
+    g: 112,
+    b: 214,
+    group: "pink"
+  },
+  {
+    name: "Plum",
+    r: 142,
+    g: 69,
+    b: 133,
+    group: "pink"
+  },
+  {
+    name: "Purple",
+    r: 128,
+    g: 0,
+    b: 128,
+    group: "pink"
+  },
+  {
+    name: "Purple pizzazz",
+    r: 254,
+    g: 78,
+    b: 218,
+    group: "pink"
+  },
+  {
+    name: "Quinacridone magenta",
+    r: 142,
+    g: 58,
+    b: 89,
+    group: "pink"
+  },
+  {
+    name: "Raspberry",
+    r: 227,
+    g: 11,
+    b: 92,
+    group: "pink"
+  },
+  {
+    name: "Razzle dazzle rose",
+    r: 255,
+    g: 51,
+    b: 204,
+    group: "pink"
+  },
+  {
+    name: "Red Violet",
+    r: 199,
+    g: 21,
+    b: 133,
+    group: "pink"
+  },
+  {
+    name: "Rose",
+    r: 255,
+    g: 0,
+    b: 128,
+    group: "pink"
+  },
+  {
+    name: "Rose Bonbon",
+    r: 249,
+    g: 66,
+    b: 158,
+    group: "pink"
+  },
+  {
+    name: "Rose ebony",
+    r: 103,
+    g: 72,
+    b: 70,
+    group: "pink"
+  },
+  {
+    name: "Rose pink",
+    r: 255,
+    g: 102,
+    b: 204,
+    group: "pink"
+  },
+  {
+    name: "Rose quartz",
+    r: 170,
+    g: 152,
+    b: 169,
+    group: "pink"
+  },
+  {
+    name: "Rose red",
+    r: 194,
+    g: 30,
+    b: 86,
+    group: "pink"
+  },
+  {
+    name: "Rose taupe",
+    r: 144,
+    g: 93,
+    b: 93,
+    group: "pink"
+  },
+  {
+    name: "Rose vale",
+    r: 171,
+    g: 78,
+    b: 82,
+    group: "pink"
+  },
+  {
+    name: "Rosewood",
+    r: 101,
+    g: 0,
+    b: 11,
+    group: "pink"
+  },
+  {
+    name: "Rosy brown",
+    r: 188,
+    g: 143,
+    b: 143,
+    group: "pink"
+  },
+  {
+    name: "Salmon pink",
+    r: 255,
+    g: 145,
+    b: 164,
+    group: "pink"
+  },
+  {
+    name: "Seashell",
+    r: 255,
+    g: 245,
+    b: 238,
+    group: "pink"
+  },
+  {
+    name: "Shocking pink",
+    r: 252,
+    g: 15,
+    b: 192,
+    group: "pink"
+  },
+  {
+    name: "Tea rose",
+    r: 244,
+    g: 194,
+    b: 194,
+    group: "pink"
+  },
+  {
+    name: "Tickle me pink",
+    r: 252,
+    g: 137,
+    b: 172,
+    group: "pink"
+  },
+  {
+    name: "Telemagenta",
+    r: 207,
+    g: 52,
+    b: 118,
+    group: "pink"
+  },
+  {
+    name: "Thulian pink",
+    r: 222,
+    g: 111,
+    b: 161,
+    group: "pink"
+  },
+  {
+    name: "Ultra pink",
+    r: 255,
+    g: 111,
+    b: 255,
+    group: "pink"
+  },
+  {
+    name: "Alabaster",
+    r: 237,
+    g: 234,
+    b: 224,
+    group: "white"
+  },
+  {
+    name: "Alice blue",
+    r: 240,
+    g: 248,
+    b: 255,
+    group: "white"
+  },
+  {
+    name: "Anti-flash white",
+    r: 242,
+    g: 243,
+    b: 244,
+    group: "white"
+  },
+  {
+    name: "Antique white",
+    r: 250,
+    g: 235,
+    b: 215,
+    group: "white"
+  },
+  {
+    name: "Azure white",
+    r: 240,
+    g: 255,
+    b: 255,
+    group: "white"
+  },
+  {
+    name: "Baby powder",
+    r: 254,
+    g: 254,
+    b: 250,
+    group: "white"
+  },
+  {
+    name: "Beige",
+    r: 245,
+    g: 245,
+    b: 220,
+    group: "white"
+  },
+  {
+    name: "Bone",
+    r: 227,
+    g: 218,
+    b: 201,
+    group: "white"
+  },
+  {
+    name: "Champagne",
+    r: 247,
+    g: 231,
+    b: 206,
+    group: "white"
+  },
+  {
+    name: "Cornsilk",
+    r: 255,
+    g: 248,
+    b: 220,
+    group: "white"
+  },
+  {
+    name: "Cosmic latte",
+    r: 255,
+    g: 248,
+    b: 231,
+    group: "white"
+  },
+  {
+    name: "Cream",
+    r: 255,
+    g: 253,
+    b: 208,
+    group: "white"
+  },
+  {
+    name: "Dutch white",
+    r: 239,
+    g: 223,
+    b: 187,
+    group: "white"
+  },
+  {
+    name: "Eggshell",
+    r: 240,
+    g: 234,
+    b: 214,
+    group: "white"
+  },
+  {
+    name: "Flax",
+    r: 238,
+    g: 220,
+    b: 130,
+    group: "white"
+  },
+  {
+    name: "Floral white",
+    r: 255,
+    g: 250,
+    b: 240,
+    group: "white"
+  },
+  {
+    name: "Ghost white",
+    r: 248,
+    g: 248,
+    b: 255,
+    group: "white"
+  },
+  {
+    name: "Honeydew",
+    r: 240,
+    g: 255,
+    b: 240,
+    group: "white"
+  },
+  {
+    name: "Isabelline",
+    r: 244,
+    g: 240,
+    b: 236,
+    group: "white"
+  },
+  {
+    name: "Ivory",
+    r: 255,
+    g: 255,
+    b: 240,
+    group: "white"
+  },
+  {
+    name: "Lavender blush",
+    r: 255,
+    g: 240,
+    b: 245,
+    group: "white"
+  },
+  {
+    name: "Lemon chiffon",
+    r: 255,
+    g: 250,
+    b: 205,
+    group: "white"
+  },
+  {
+    name: "Linen",
+    r: 250,
+    g: 240,
+    b: 230,
+    group: "white"
+  },
+  {
+    name: "Magnolia",
+    r: 248,
+    g: 244,
+    b: 255,
+    group: "white"
+  },
+  {
+    name: "Mint cream",
+    r: 245,
+    g: 255,
+    b: 250,
+    group: "white"
+  },
+  {
+    name: "Misty rose",
+    r: 255,
+    g: 228,
+    b: 225,
+    group: "white"
+  },
+  {
+    name: "Navajo white",
+    r: 255,
+    g: 222,
+    b: 173,
+    group: "white"
+  },
+  {
+    name: "Nyanza",
+    r: 233,
+    g: 255,
+    b: 219,
+    group: "white"
+  },
+  {
+    name: "Old lace",
+    r: 253,
+    g: 245,
+    b: 230,
+    group: "white"
+  },
+  {
+    name: "Papaya whip",
+    r: 255,
+    g: 239,
+    b: 213,
+    group: "white"
+  },
+  {
+    name: "Parchment",
+    r: 241,
+    g: 233,
+    b: 210,
+    group: "white"
+  },
+  {
+    name: "Peach",
+    r: 255,
+    g: 203,
+    b: 164,
+    group: "white"
+  },
+  {
+    name: "Pearl",
+    r: 234,
+    g: 224,
+    b: 200,
+    group: "white"
+  },
+  {
+    name: "Platinum",
+    r: 229,
+    g: 228,
+    b: 226,
+    group: "white"
+  },
+  {
+    name: "Seasalt",
+    r: 247,
+    g: 247,
+    b: 247,
+    group: "white"
+  },
+  {
+    name: "Seashell",
+    r: 255,
+    g: 245,
+    b: 238,
+    group: "white"
+  },
+  {
+    name: "Snow",
+    r: 255,
+    g: 250,
+    b: 250,
+    group: "white"
+  },
+  {
+    name: "Vanilla",
+    r: 243,
+    g: 229,
+    b: 171,
+    group: "white"
+  },
+  {
+    name: "White",
+    r: 255,
+    g: 255,
+    b: 255,
+    group: "white"
+  },
+  {
+    name: "White smoke",
+    r: 245,
+    g: 245,
+    b: 245,
+    group: "white"
+  },
+  {
+    name: "White smoke",
+    r: 245,
+    g: 245,
+    b: 245,
+    group: "gray"
+  },
+  {
+    name: "Platinum",
+    r: 229,
+    g: 228,
+    b: 226,
+    group: "gray"
+  },
+  {
+    name: "Timberwolf",
+    r: 219,
+    g: 215,
+    b: 210,
+    group: "gray"
+  },
+  {
+    name: "Silver",
+    r: 192,
+    g: 192,
+    b: 192,
+    group: "gray"
+  },
+  {
+    name: "French gray",
+    r: 190,
+    g: 191,
+    b: 197,
+    group: "gray"
+  },
+  {
+    name: "Ash gray",
+    r: 178,
+    g: 190,
+    b: 181,
+    group: "gray"
+  },
+  {
+    name: "Rose quartz",
+    r: 170,
+    g: 152,
+    b: 169,
+    group: "gray"
+  },
+  {
+    name: "Cinereous",
+    r: 152,
+    g: 129,
+    b: 123,
+    group: "gray"
+  },
+  {
+    name: "Cadet gray",
+    r: 145,
+    g: 163,
+    b: 176,
+    group: "gray"
+  },
+  {
+    name: "Cool gray",
+    r: 140,
+    g: 146,
+    b: 172,
+    group: "gray"
+  },
+  {
+    name: "Taupe gray",
+    r: 139,
+    g: 133,
+    b: 137,
+    group: "gray"
+  },
+  {
+    name: "Battleship gray",
+    r: 132,
+    g: 132,
+    b: 130,
+    group: "gray"
+  },
+  {
+    name: "Gray",
+    r: 128,
+    g: 128,
+    b: 128,
+    group: "gray"
+  },
+  {
+    name: "Slate gray",
+    r: 112,
+    g: 128,
+    b: 144,
+    group: "gray"
+  },
+  {
+    name: "Dim gray",
+    r: 105,
+    g: 105,
+    b: 105,
+    group: "gray"
+  },
+  {
+    name: "Davy's gray",
+    r: 85,
+    g: 85,
+    b: 85,
+    group: "gray"
+  },
+  {
+    name: "Payne's gray",
+    r: 83,
+    g: 104,
+    b: 120,
+    group: "gray"
+  },
+  {
+    name: "Glaucous",
+    r: 96,
+    g: 130,
+    b: 182,
+    group: "gray"
+  },
+  {
+    name: "Gunmetal",
+    r: 42,
+    g: 52,
+    b: 57,
+    group: "gray"
+  },
+  {
+    name: "Feldgrau",
+    r: 77,
+    g: 93,
+    b: 83,
+    group: "gray"
+  },
+  {
+    name: "Dark slate gray",
+    r: 47,
+    g: 79,
+    b: 79,
+    group: "gray"
+  },
+  {
+    name: "Bistre",
+    r: 61,
+    g: 43,
+    b: 31,
+    group: "black"
+  },
+  {
+    name: "Black",
+    r: 0,
+    g: 0,
+    b: 0,
+    group: "black"
+  },
+  {
+    name: "Black bean",
+    r: 61,
+    g: 12,
+    b: 2,
+    group: "black"
+  },
+  {
+    name: "Black olive",
+    r: 59,
+    g: 60,
+    b: 54,
+    group: "black"
+  },
+  {
+    name: "Café noir",
+    r: 75,
+    g: 54,
+    b: 33,
+    group: "black"
+  },
+  {
+    name: "Charcoal",
+    r: 54,
+    g: 69,
+    b: 79,
+    group: "black"
+  },
+  {
+    name: "Dark purple",
+    r: 48,
+    g: 25,
+    b: 52,
+    group: "black"
+  },
+  {
+    name: "Ebony",
+    r: 85,
+    g: 93,
+    b: 80,
+    group: "black"
+  },
+  {
+    name: "Eerie black",
+    r: 27,
+    g: 27,
+    b: 27,
+    group: "black"
+  },
+  {
+    name: "Jet",
+    r: 52,
+    g: 52,
+    b: 52,
+    group: "black"
+  },
+  {
+    name: "Licorice",
+    r: 26,
+    g: 17,
+    b: 16,
+    group: "black"
+  },
+  {
+    name: "Midnight blue",
+    r: 25,
+    g: 25,
+    b: 112,
+    group: "black"
+  },
+  {
+    name: "Night",
+    r: 17,
+    g: 17,
+    b: 17,
+    group: "black"
+  },
+  {
+    name: "Onyx",
+    r: 53,
+    g: 56,
+    b: 57,
+    group: "black"
+  },
+  {
+    name: "Outer space",
+    r: 65,
+    g: 74,
+    b: 76,
+    group: "black"
+  },
+  {
+    name: "Raisin black",
+    r: 36,
+    g: 33,
+    b: 36,
+    group: "black"
+  },
+  {
+    name: "Rich black",
+    r: 1,
+    g: 11,
+    b: 19,
+    group: "black"
+  },
+  {
+    name: "Russian violet",
+    r: 50,
+    g: 23,
+    b: 77,
+    group: "black"
+  },
+  {
+    name: "Smoky black",
+    r: 16,
+    g: 12,
+    b: 8,
+    group: "black"
+  },
+  {
+    name: "Taupe",
+    r: 72,
+    g: 60,
+    b: 50,
+    group: "black"
+  }
 ];
 
-// Helper function to find nearest CSS color and return its W3Schools group
-function findNearestColor(r: number, g: number, b: number): string {
-  // Convert 0-1 range to 0-255 range for distance calculation
-  const R = Math.round(r * 255);
-  const G = Math.round(g * 255);
-  const B = Math.round(b * 255);
+// Utilities
+// Normalize RGB to 0–255 if Figma-style 0–1 values are passed
+function normalizeRgb(r: number, g: number, b: number) {
+  const inUnit = r <= 1 && g <= 1 && b <= 1;
+  return inUnit ? { r: r * 255, g: g * 255, b: b * 255 } : { r, g, b };
+}
 
-  let nearestIndex = 0;
-  let nearestDistance = 255 * 255 * 255;
+function rgbToHsl(r: number, g: number, b: number) {
+  const n = normalizeRgb(r, g, b);
+  let R = n.r / 255, G = n.g / 255, B = n.b / 255;
+  const max = Math.max(R, G, B), min = Math.min(R, G, B);
+  let h = 0, s = 0, l = (max + min) / 2;
+  const d = max - min;
+  if (d !== 0) {
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case R: h = (G - B) / d + (G < B ? 6 : 0); break;
+      case G: h = (B - R) / d + 2; break;
+      case B: h = (R - G) / d + 4; break;
+    }
+    h *= 60;
+  }
+  return { h, s, l };
+}
 
-  for (let i = 0; i < cssColors.length; i++) {
-    const deltaR = cssColors[i].r - R;
-    const deltaG = cssColors[i].g - G;
-    const deltaB = cssColors[i].b - B;
+function rgbToLab(r: number, g: number, b: number) {
+  const n = normalizeRgb(r, g, b);
+  const srgb = [n.r, n.g, n.b].map(v => v / 255);
+  const lin = srgb.map(v => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+  const X = lin[0] * 0.4124 + lin[1] * 0.3576 + lin[2] * 0.1805;
+  const Y = lin[0] * 0.2126 + lin[1] * 0.7152 + lin[2] * 0.0722;
+  const Z = lin[0] * 0.0193 + lin[1] * 0.1192 + lin[2] * 0.9505;
+  const xr = X / 0.95047, yr = Y / 1.00000, zr = Z / 1.08883;
+  const f = (t: number) => (t > 0.008856 ? Math.cbrt(t) : (7.787 * t + 16 / 116));
+  const fx = f(xr), fy = f(yr), fz = f(zr);
+  const L = 116 * fy - 16;
+  const a = 500 * (fx - fy);
+  const b2 = 200 * (fy - fz);
+  return { L, a, b: b2 };
+}
 
-    const distance = (deltaR * deltaR) + (deltaG * deltaG) + (deltaB * deltaB);
+function deltaE76(a: { L: number, a: number, b: number }, b: { L: number, a: number, b: number }) {
+  const dL = a.L - b.L, da = a.a - b.a, db = a.b - b.b;
+  return Math.sqrt(dL * dL + da * da + db * db);
+}
 
-    if (distance < nearestDistance) {
-      nearestDistance = distance;
-      nearestIndex = i;
+// Map hue to broad group
+function hueToGroup(h: number): ChromaticGroup {
+  if (h < 0) h += 360;
+  if (h >= 345 || h < 15) return 'red';
+  if (h < 30) return 'brown'; // Dark reddish browns
+  if (h < 45) return 'orange';
+  if (h < 70) return 'yellow';
+  if (h < 170) return 'green';
+  if (h < 200) return 'turquoise'; // Cyan/turquoise range
+  if (h < 250) return 'blue';
+  if (h < 300) return 'purple';
+  return 'pink';
+}
+
+// Neighbor groups to allow near boundaries
+const groupNeighbors: Record<ChromaticGroup, ChromaticGroup[]> = {
+  red: ['red', 'orange', 'pink'],
+  orange: ['orange', 'red', 'yellow', 'brown'],
+  yellow: ['yellow', 'orange', 'green', 'brown'],
+  green: ['green', 'yellow', 'blue', 'turquoise'],
+  blue: ['blue', 'green', 'purple', 'turquoise'],
+  purple: ['purple', 'blue', 'pink'],
+  pink: ['pink', 'purple', 'red'],
+  brown: ['brown', 'orange', 'yellow', 'red'],
+  turquoise: ['turquoise', 'green', 'blue'],
+};
+
+// Neutral detection by low saturation or extreme lightness
+function detectNeutral(h: number, s: number, l: number): 'white' | 'gray' | 'black' | null {
+  const lowSat = s < 0.05; // was 0.08, now more restrictive
+  if (lowSat) {
+    if (l > 0.95) return 'white'; // was 0.93
+    if (l < 0.05) return 'black'; // was 0.07
+    return 'gray';
+  }
+  return null;
+}
+
+// Improved nearest color: gate by hue group and compare in Lab
+function findNearestColor(r: number, g: number, b: number): Group {
+  const { h, s, l } = rgbToHsl(r, g, b);
+
+  // Debug log for #E3F0FC
+  console.log(`Input RGB: ${r}, ${g}, ${b}`);
+  console.log(`HSL: h=${h.toFixed(1)}, s=${s.toFixed(3)}, l=${l.toFixed(3)}`);
+
+  // Neutrals first - let's be more restrictive
+  const neutral = detectNeutral(h, s, l);
+  if (neutral) {
+    console.log(`Detected as neutral: ${neutral}`);
+    return neutral;
+  }
+
+  const primaryGroup = hueToGroup(h);
+  console.log(`Primary hue group: ${primaryGroup}`);
+
+  // Let's check ALL colors, not just neighbors, to see what's happening
+  const targetLab = rgbToLab(r, g, b);
+
+  let minD = Number.POSITIVE_INFINITY;
+  let bestGroup: Group = primaryGroup;
+  let closestColor = '';
+
+  for (const color of cssColors) {
+    const lab = rgbToLab(color.r, color.g, color.b);
+    const d = deltaE76(targetLab, lab);
+    if (d < minD) {
+      minD = d;
+      bestGroup = color.group;
+      closestColor = color.name;
     }
   }
 
-  return cssColors[nearestIndex].group;
+  console.log(`Closest color: ${closestColor} (${bestGroup}), distance: ${minD.toFixed(2)}`);
+  return bestGroup;
 }
 
 // Helper function to convert RGB to HSB and get brightness value
@@ -236,6 +4558,51 @@ function getAncestors(node: BaseNode): BaseNode[] {
     parent = parent.parent;
   }
   return ancestors;
+}
+
+// Replace the HSL naming function with simpler collision handling
+
+function generateHSLColorName(r: number, g: number, b: number, usedNames: Set<string>): string {
+  const baseColor = findNearestColor(r, g, b);
+  const { h, s, l } = rgbToHsl(r, g, b);
+
+  const lightness = Math.round(l * 100);
+  const saturation = Math.round(s * 100);
+
+  // Map to Tailwind-like scale (50, 100, 200, 300, 400, 500, 600, 700, 800, 900)
+  let scale: number;
+  if (lightness >= 95) scale = 50;
+  else if (lightness >= 85) scale = 100;
+  else if (lightness >= 75) scale = 200;
+  else if (lightness >= 65) scale = 300;
+  else if (lightness >= 55) scale = 400;
+  else if (lightness >= 45) scale = 500;
+  else if (lightness >= 35) scale = 600;
+  else if (lightness >= 25) scale = 700;
+  else if (lightness >= 15) scale = 800;
+  else scale = 900;
+
+  // Determine saturation category (only for non-neutral colors)
+  let saturationSuffix = '';
+  if (saturation >= 15) {
+    if (saturation >= 80) saturationSuffix = '-vivid';
+    else if (saturation >= 60) saturationSuffix = '-bright';
+    else if (saturation >= 40) saturationSuffix = '-medium';
+    else if (saturation >= 20) saturationSuffix = '-muted';
+    else saturationSuffix = '-pale';
+  }
+
+  let baseName = `${baseColor}-${scale}${saturationSuffix}`;
+
+  // Simple collision handling with counter increment
+  let finalName = baseName;
+  let counter = 1;
+  while (usedNames.has(finalName)) {
+    finalName = `${baseName}-${counter}`;
+    counter++;
+  }
+
+  return finalName;
 }
 
 figma.ui.onmessage = async (msg: PluginMessage) => {
@@ -369,10 +4736,8 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
 
         // Append color match if selected
         if (msg.appendMode === 'color') {
-          const colorName = findNearestColor(fill.color.r, fill.color.g, fill.color.b);
-          const [, , brightness] = rgbToHsb(fill.color.r, fill.color.g, fill.color.b);
-          const brightnessValue = Math.round(brightness);
-          baseName = `${baseName} ${colorName}-${brightnessValue}`;
+          const colorPart = generateHSLColorName(fill.color.r, fill.color.g, fill.color.b, new Set());
+          baseName = `${msg.customName.trim()}-${colorPart}`;
         }
 
         let finalName = baseName;
@@ -413,25 +4778,13 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
           }
           variableName = finalName;
         } else {
-          // No text nodes available, use color-based naming with brightness
-          const colorName = findNearestColor(fill.color.r, fill.color.g, fill.color.b);
-          const [, , brightness] = rgbToHsb(fill.color.r, fill.color.g, fill.color.b);
-          const brightnessValue = Math.round(brightness);
-          let baseName = `${colorName}-${brightnessValue}`;
-
-          // Handle duplicate names by adding a counter
-          let finalName = baseName;
-          let duplicateCounter = 1;
-          while (usedNames.has(finalName)) {
-            finalName = `${baseName}-${duplicateCounter}`;
-            duplicateCounter++;
-          }
-          variableName = finalName;
+          // No text nodes available, use Tailwind-style scale naming
+          variableName = generateHSLColorName(fill.color.r, fill.color.g, fill.color.b, usedNames);
         }
-      }
 
-      // Add the final name to used names set
-      usedNames.add(variableName);
+        // Add to used names set
+        usedNames.add(variableName);
+      }
 
       const variable = await figma.variables.createVariable(
         variableName,

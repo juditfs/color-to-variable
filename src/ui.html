@@ -130,7 +130,7 @@
       color: #666;
       line-height: 1.4;
       /* margin-top: 2px; */
-      /* background: #F0F8FF; */
+      /* background: #F0
       /* padding: 8px 10px; */
       /* border-radius: 4px; */
       /* border-left: 3px solid #18A0FB; */
@@ -241,6 +241,7 @@
       min-width: 20px;
       flex-shrink: 0;
       line-height: 1.4;
+      padding-top: 1px;
     }
 
     .step-content {
@@ -324,19 +325,20 @@
             <div class="expandable-content" id="other-options">
               <div class="radio-group">
                 <div class="radio-option">
-                  <input type="radio" id="figma-default" name="naming-mode" value="figma-default" checked>
-                  <label for="figma-default">Figma default</label>
-                </div>
-                <div class="info-text" id="figma-default-info" style="margin-left: 18px; margin-top: 2px;">
-                  Color, Color 2...
-                </div>
-
-                <div class="radio-option">
-                  <input type="radio" id="auto-name" name="naming-mode" value="auto">
+                  <input type="radio" id="auto-name" name="naming-mode" value="auto" checked>
                   <label for="auto-name">Best match</label>
                 </div>
                 <div class="info-text" id="auto-info" style="margin-left: 18px; margin-top: 2px; display: none;">
                   Analyzes color values to find the closest base color name (e.g., red-85, blue-72)
+                </div>
+
+                <div class="radio-option">
+                  <input type="radio" id="figma-default" name="naming-mode" value="figma-default">
+                  <label for="figma-default">Figma default</label>
+                </div>
+                <div class="info-text" id="figma-default-info"
+                  style="margin-left: 18px; margin-top: 2px; display: none;">
+                  Color, Color 2...
                 </div>
 
                 <div class="radio-option">
@@ -546,8 +548,8 @@
         });
       });
 
-      // Show the default info text on page load (since figma-default is checked by default)
-      document.getElementById('figma-default-info').style.display = 'block';
+      // Show the default info text on page load (since auto is checked by default)
+      document.getElementById('auto-info').style.display = 'block';
     });
   </script>
 </body>

@@ -4458,6 +4458,24 @@ function getAncestors(node: BaseNode): BaseNode[] {
   return ancestors;
 }
 
+// Function to sanitize variable names by removing or replacing problematic characters
+function sanitizeVariableName(name: string): string {
+  if (!name) return '';
+
+  return name
+    .trim() // Remove leading/trailing spaces
+    .replace(/[\/\\]/g, '-') // Replace forward slashes and backslashes with hyphens
+    .replace(/[\.]/g, ' ') // Replace periods with spaces
+    .replace(/[,;:|]/g, ' ') // Replace commas, semicolons, colons, pipes with spaces
+    .replace(/[<>'"]/g, ' ') // Replace quotes and angle brackets with spaces
+    .replace(/[\[\](){}]/g, ' ') // Replace brackets and parentheses with spaces
+    .replace(/[#@%^&*+=]/g, ' ') // Replace special symbols with spaces (keep $ and numbers)
+    .replace(/\s+/g, ' ') // Collapse multiple spaces to single space
+    .replace(/^\-+|\-+$/g, '') // Remove leading or trailing hyphens only
+    .substring(0, 100) // Limit length to 100 characters
+    .trim(); // Final trim
+}
+
 // Replace the HSL naming function with simpler collision handling
 
 function generateHSLColorName(r: number, g: number, b: number, usedNames: Set<string>): string {
@@ -4621,7 +4639,13 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       // Handle naming based on mode - but always check for text nodes first
       if (matchingTextNode) {
         // Use the matching text node's content for any naming mode
-        let baseName = matchingTextNode.characters;
+        let baseName = sanitizeVariableName(matchingTextNode.characters);
+
+        // If sanitization resulted in empty string, fall back to auto naming
+        if (!baseName) {
+          baseName = generateHSLColorName(fill.color.r, fill.color.g, fill.color.b, usedNames);
+        }
+
         let finalName = baseName;
         let duplicateCounter = 1;
         while (usedNames.has(finalName)) {
@@ -4633,7 +4657,13 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         textNodes.splice(textNodes.indexOf(matchingTextNode), 1);
       } else if (textNodes.length > 0) {
         // If no matching text node but there are text nodes available, use the first one
-        let baseName = `${textNodes[0].characters}${textNodeCounter++}`;
+        let baseName = sanitizeVariableName(`${textNodes[0].characters}${textNodeCounter++}`);
+
+        // If sanitization resulted in empty string, fall back to auto naming
+        if (!baseName) {
+          baseName = generateHSLColorName(fill.color.r, fill.color.g, fill.color.b, usedNames);
+        }
+
         let finalName = baseName;
         let duplicateCounter = 1;
         while (usedNames.has(finalName)) {
@@ -4653,12 +4683,18 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         variableName = finalName;
       } else if (msg.namingMode === 'manual' && msg.customName && msg.customName.trim()) {
         // Use custom name provided by user (only when no text nodes)
-        let baseName = msg.customName.trim();
+        let baseName = sanitizeVariableName(msg.customName.trim());
+
+        // If sanitization resulted in empty string, show error and fall back
+        if (!baseName) {
+          figma.notify('Variable name contains only invalid characters. Please use a different name.', { error: true });
+          baseName = generateHSLColorName(fill.color.r, fill.color.g, fill.color.b, usedNames);
+        }
 
         // Append color match if selected
         if (msg.appendMode === 'color') {
           const colorPart = generateHSLColorName(fill.color.r, fill.color.g, fill.color.b, new Set());
-          baseName = `${msg.customName.trim()}-${colorPart}`;
+          baseName = `${baseName}-${colorPart}`;
         }
 
         let finalName = baseName;
@@ -4666,7 +4702,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         while (usedNames.has(finalName)) {
           // For increment mode, use Figma's default format: space + number
           if (msg.appendMode === 'increment') {
-            finalName = `${msg.customName.trim()} ${duplicateCounter}`;
+            finalName = `${sanitizeVariableName(msg.customName.trim())} ${duplicateCounter}`;
           } else {
             // For color mode, append to the color-appended name
             finalName = `${baseName}-${duplicateCounter}`;

@@ -291,6 +291,16 @@
       margin-top: 0px;
     }
 
+    .radio-group-item {
+      margin-bottom: 4px;
+      /* Add spacing between radio groups */
+    }
+
+    .radio-group-item:last-child {
+      margin-bottom: 0;
+      /* Remove margin from last item */
+    }
+
   </style>
 </head>
 
@@ -324,48 +334,54 @@
             </div>
             <div class="expandable-content" id="other-options">
               <div class="radio-group">
-                <div class="radio-option">
-                  <input type="radio" id="auto-name" name="naming-mode" value="auto" checked>
-                  <label for="auto-name">Best guess</label>
-                </div>
-                <div class="info-text" id="auto-info" style="margin-left: 18px; margin-top: 2px; display: none;">
-                  Analyzes color values to determine the closest base color, adds lightness scale and saturation
-                  descriptor (e.g., blue-300-vivid, red-500-muted) May require manual updates.
-                </div>
-
-                <div class="radio-option">
-                  <input type="radio" id="figma-default" name="naming-mode" value="figma-default">
-                  <label for="figma-default">Figma default</label>
-                </div>
-                <div class="info-text" id="figma-default-info"
-                  style="margin-left: 18px; margin-top: 2px; display: none;">
-                  Color, Color 2...
+                <div class="radio-group-item">
+                  <div class="radio-option">
+                    <input type="radio" id="auto-name" name="naming-mode" value="auto" checked>
+                    <label for="auto-name">Best guess</label>
+                  </div>
+                  <div class="info-text" id="auto-info" style="margin-left: 18px; margin-top: 2px; display: none;">
+                    Analyzes color values to determine the closest base color, adds lightness scale and saturation
+                    descriptor (e.g., blue-300-vivid, red-500-muted) May require manual updates.
+                  </div>
                 </div>
 
-                <div class="radio-option">
-                  <input type="radio" id="manual-name" name="naming-mode" value="manual">
-                  <label for="manual-name">Custom</label>
+                <div class="radio-group-item">
+                  <div class="radio-option">
+                    <input type="radio" id="figma-default" name="naming-mode" value="figma-default">
+                    <label for="figma-default">Figma default</label>
+                  </div>
+                  <div class="info-text" id="figma-default-info"
+                    style="margin-left: 18px; margin-top: 2px; display: none;">
+                    Color, Color 2...
+                  </div>
                 </div>
 
-                <div class="form-group hidden custom-options" id="custom-name-row">
-                  <label for="custom-name">Variable name</label>
-                  <input type="text" id="custom-name" placeholder="MyColor">
-                  <span class="error-message" id="name-error">Enter a variable name</span>
+                <div class="radio-group-item">
+                  <div class="radio-option">
+                    <input type="radio" id="manual-name" name="naming-mode" value="manual">
+                    <label for="manual-name">Custom</label>
+                  </div>
 
-                  <label style="margin-top: 8px;">If name already exists</label>
-                  <div class="radio-group">
-                    <div class="radio-option">
-                      <input type="radio" id="append-increment" name="append-mode" value="increment" checked>
-                      <label for="append-increment">Append increment</label>
+                  <div class="form-group hidden custom-options" id="custom-name-row">
+                    <label for="custom-name">Variable name</label>
+                    <input type="text" id="custom-name" placeholder="MyColor">
+                    <span class="error-message" id="name-error">Enter a variable name</span>
+
+                    <label style="margin-top: 8px;">If name already exists</label>
+                    <div class="radio-group">
+                      <div class="radio-option">
+                        <input type="radio" id="append-increment" name="append-mode" value="increment" checked>
+                        <label for="append-increment">Append increment</label>
+                      </div>
+                      <div class="radio-description">My color, My color 2</div>
+
+                      <!-- Add margin to create space between radio options -->
+                      <div class="radio-option" style="margin-top: 4px;">
+                        <input type="radio" id="append-color" name="append-mode" value="color">
+                        <label for="append-color">Append best guess</label>
+                      </div>
+                      <div class="radio-description">My color red-500-vivid</div>
                     </div>
-                    <div class="radio-description">My color, My color 2</div>
-
-                    <!-- Add margin to create space between radio options -->
-                    <div class="radio-option" style="margin-top: 4px;">
-                      <input type="radio" id="append-color" name="append-mode" value="color">
-                      <label for="append-color">Append best guess</label>
-                    </div>
-                    <div class="radio-description">My color red-500-vivid</div>
                   </div>
                 </div>
               </div>

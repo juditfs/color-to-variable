@@ -4458,6 +4458,28 @@ function getAncestors(node: BaseNode): BaseNode[] {
   return ancestors;
 }
 
+// Helper function to generate unique collection name
+async function generateUniqueCollectionName(): Promise<string> {
+  const existingCollections = await figma.variables.getLocalVariableCollections();
+  const baseName = "Color to variable";
+  
+  // Check if base name is available
+  if (!existingCollections.some(c => c.name === baseName)) {
+    return baseName;
+  }
+  
+  // Find the next available number
+  let counter = 2;
+  let candidateName = `${baseName} ${counter}`;
+  
+  while (existingCollections.some(c => c.name === candidateName)) {
+    counter++;
+    candidateName = `${baseName} ${counter}`;
+  }
+  
+  return candidateName;
+}
+
 // Function to sanitize variable names by removing or replacing problematic characters
 function sanitizeVariableName(name: string): string {
   if (!name) return '';
@@ -4469,7 +4491,7 @@ function sanitizeVariableName(name: string): string {
     .replace(/[,;:|]/g, ' ') // Replace commas, semicolons, colons, pipes with spaces
     .replace(/[<>'"]/g, ' ') // Replace quotes and angle brackets with spaces
     .replace(/[\[\](){}]/g, ' ') // Replace brackets and parentheses with spaces
-    .replace(/[#@%^&*+=]/g, ' ') // Replace special symbols with spaces (keep $ and numbers)
+    .replace(/[#@$%^&*+=]/g, ' ') // Replace special symbols with spaces (including $)
     .replace(/\s+/g, ' ') // Collapse multiple spaces to single space
     .replace(/^\-+|\-+$/g, '') // Remove leading or trailing hyphens only
     .substring(0, 100) // Limit length to 100 characters
@@ -4593,13 +4615,15 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
     let targetCollection;
     let isNewCollection = false;
     if (msg.collectionId === 'new') {
-      targetCollection = await figma.variables.createVariableCollection("Colors");
+      const collectionName = await generateUniqueCollectionName();
+      targetCollection = await figma.variables.createVariableCollection(collectionName);
       isNewCollection = true;
     } else {
       const collections = await figma.variables.getLocalVariableCollections();
       targetCollection = collections.find(c => c.id === msg.collectionId);
       if (!targetCollection) {
-        targetCollection = await figma.variables.createVariableCollection("Colors");
+        const collectionName = await generateUniqueCollectionName();
+        targetCollection = await figma.variables.createVariableCollection(collectionName);
         isNewCollection = true;
       }
     }

@@ -4719,9 +4719,31 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         );
       });
 
-      // Handle naming based on mode
-      if (msg.namingMode === 'figma-default') {
-        // Use Figma's default naming: Color + increment
+      // Handle naming based on mode - but always check for text nodes first
+      if (matchingTextNode) {
+        // Use the matching text node's content for any naming mode
+        let baseName = matchingTextNode.characters;
+        let finalName = baseName;
+        let duplicateCounter = 1;
+        while (usedNames.has(finalName)) {
+          finalName = `${baseName}-${duplicateCounter}`;
+          duplicateCounter++;
+        }
+        variableName = finalName;
+        // Remove this text node from available text nodes to avoid reusing it
+        textNodes.splice(textNodes.indexOf(matchingTextNode), 1);
+      } else if (textNodes.length > 0) {
+        // If no matching text node but there are text nodes available, use the first one
+        let baseName = `${textNodes[0].characters}${counter++}`;
+        let finalName = baseName;
+        let duplicateCounter = 1;
+        while (usedNames.has(finalName)) {
+          finalName = `${baseName}-${duplicateCounter}`;
+          duplicateCounter++;
+        }
+        variableName = finalName;
+      } else if (msg.namingMode === 'figma-default') {
+        // Use Figma's default naming: Color + increment (only when no text nodes)
         let baseName = 'Color';
         let finalName = baseName;
         let duplicateCounter = 1;
@@ -4731,7 +4753,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         }
         variableName = finalName;
       } else if (msg.namingMode === 'manual' && msg.customName && msg.customName.trim()) {
-        // Use custom name provided by user
+        // Use custom name provided by user (only when no text nodes)
         let baseName = msg.customName.trim();
 
         // Append color match if selected
@@ -4754,37 +4776,12 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         }
         variableName = finalName;
       } else {
-        // Auto mode - use existing logic
-        if (matchingTextNode) {
-          // Use the matching text node's content
-          let baseName = matchingTextNode.characters;
-          let finalName = baseName;
-          let duplicateCounter = 1;
-          while (usedNames.has(finalName)) {
-            finalName = `${baseName}-${duplicateCounter}`;
-            duplicateCounter++;
-          }
-          variableName = finalName;
-          // Remove this text node from available text nodes to avoid reusing it
-          textNodes.splice(textNodes.indexOf(matchingTextNode), 1);
-        } else if (textNodes.length > 0) {
-          // If no matching text node but there are text nodes available, use the first one
-          let baseName = `${textNodes[0].characters}${counter++}`;
-          let finalName = baseName;
-          let duplicateCounter = 1;
-          while (usedNames.has(finalName)) {
-            finalName = `${baseName}-${duplicateCounter}`;
-            duplicateCounter++;
-          }
-          variableName = finalName;
-        } else {
-          // No text nodes available, use Tailwind-style scale naming
-          variableName = generateHSLColorName(fill.color.r, fill.color.g, fill.color.b, usedNames);
-        }
-
-        // Add to used names set
-        usedNames.add(variableName);
+        // Auto mode - use Tailwind-style scale naming (only when no text nodes)
+        variableName = generateHSLColorName(fill.color.r, fill.color.g, fill.color.b, usedNames);
       }
+
+      // Add the final name to used names set
+      usedNames.add(variableName);
 
       const variable = await figma.variables.createVariable(
         variableName,

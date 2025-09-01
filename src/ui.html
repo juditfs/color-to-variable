@@ -326,10 +326,11 @@
               <div class="radio-group">
                 <div class="radio-option">
                   <input type="radio" id="auto-name" name="naming-mode" value="auto" checked>
-                  <label for="auto-name">Best match</label>
+                  <label for="auto-name">Best guess</label>
                 </div>
                 <div class="info-text" id="auto-info" style="margin-left: 18px; margin-top: 2px; display: none;">
-                  Analyzes color values to find the closest base color name (e.g., red-85, blue-72)
+                  Analyzes color values to determine the closest base color, adds lightness scale and saturation
+                  descriptor (e.g., blue-300-vivid, red-500-muted) May require manual updates.
                 </div>
 
                 <div class="radio-option">
@@ -362,9 +363,9 @@
                     <!-- Add margin to create space between radio options -->
                     <div class="radio-option" style="margin-top: 4px;">
                       <input type="radio" id="append-color" name="append-mode" value="color">
-                      <label for="append-color">Append color match</label>
+                      <label for="append-color">Append best guess</label>
                     </div>
-                    <div class="radio-description">My color red-85</div>
+                    <div class="radio-description">My color red-500-vivid</div>
                   </div>
                 </div>
               </div>

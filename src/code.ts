@@ -8,8 +8,6 @@ interface PluginMessage {
   appendMode?: 'increment' | 'color';
 }
 
-let counter = 1;
-
 figma.showUI(__html__, { width: 320, height: 600 });
 
 // CSS color palette with expanded color matches
@@ -4405,148 +4403,48 @@ const cssColors: NamedColor[] = [
   }
 ];
 
-// Utilities
-// Normalize RGB to 0–255 if Figma-style 0–1 values are passed
-function normalizeRgb(r: number, g: number, b: number) {
-  const inUnit = r <= 1 && g <= 1 && b <= 1;
-  return inUnit ? { r: r * 255, g: g * 255, b: b * 255 } : { r, g, b };
-}
-
+// Simple RGB to HSL conversion for Figma's 0-1 RGB values
 function rgbToHsl(r: number, g: number, b: number) {
-  const n = normalizeRgb(r, g, b);
-  let R = n.r / 255, G = n.g / 255, B = n.b / 255;
-  const max = Math.max(R, G, B), min = Math.min(R, G, B);
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
   let h = 0, s = 0, l = (max + min) / 2;
   const d = max - min;
+
   if (d !== 0) {
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
     switch (max) {
-      case R: h = (G - B) / d + (G < B ? 6 : 0); break;
-      case G: h = (B - R) / d + 2; break;
-      case B: h = (R - G) / d + 4; break;
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
     }
     h *= 60;
   }
   return { h, s, l };
 }
 
-function rgbToLab(r: number, g: number, b: number) {
-  const n = normalizeRgb(r, g, b);
-  const srgb = [n.r, n.g, n.b].map(v => v / 255);
-  const lin = srgb.map(v => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
-  const X = lin[0] * 0.4124 + lin[1] * 0.3576 + lin[2] * 0.1805;
-  const Y = lin[0] * 0.2126 + lin[1] * 0.7152 + lin[2] * 0.0722;
-  const Z = lin[0] * 0.0193 + lin[1] * 0.1192 + lin[2] * 0.9505;
-  const xr = X / 0.95047, yr = Y / 1.00000, zr = Z / 1.08883;
-  const f = (t: number) => (t > 0.008856 ? Math.cbrt(t) : (7.787 * t + 16 / 116));
-  const fx = f(xr), fy = f(yr), fz = f(zr);
-  const L = 116 * fy - 16;
-  const a = 500 * (fx - fy);
-  const b2 = 200 * (fy - fz);
-  return { L, a, b: b2 };
-}
-
-function deltaE76(a: { L: number, a: number, b: number }, b: { L: number, a: number, b: number }) {
-  const dL = a.L - b.L, da = a.a - b.a, db = a.b - b.b;
-  return Math.sqrt(dL * dL + da * da + db * db);
-}
-
-// Map hue to broad group
-function hueToGroup(h: number): ChromaticGroup {
-  if (h < 0) h += 360;
-  if (h >= 345 || h < 15) return 'red';
-  if (h < 30) return 'brown'; // Dark reddish browns
-  if (h < 45) return 'orange';
-  if (h < 70) return 'yellow';
-  if (h < 170) return 'green';
-  if (h < 200) return 'turquoise'; // Cyan/turquoise range
-  if (h < 250) return 'blue';
-  if (h < 300) return 'purple';
-  return 'pink';
-}
-
-// Neighbor groups to allow near boundaries
-const groupNeighbors: Record<ChromaticGroup, ChromaticGroup[]> = {
-  red: ['red', 'orange', 'pink'],
-  orange: ['orange', 'red', 'yellow', 'brown'],
-  yellow: ['yellow', 'orange', 'green', 'brown'],
-  green: ['green', 'yellow', 'blue', 'turquoise'],
-  blue: ['blue', 'green', 'purple', 'turquoise'],
-  purple: ['purple', 'blue', 'pink'],
-  pink: ['pink', 'purple', 'red'],
-  brown: ['brown', 'orange', 'yellow', 'red'],
-  turquoise: ['turquoise', 'green', 'blue'],
-};
-
-// Neutral detection by low saturation or extreme lightness
-function detectNeutral(h: number, s: number, l: number): 'white' | 'gray' | 'black' | null {
-  const lowSat = s < 0.05; // was 0.08, now more restrictive
-  if (lowSat) {
-    if (l > 0.95) return 'white'; // was 0.93
-    if (l < 0.05) return 'black'; // was 0.07
-    return 'gray';
-  }
-  return null;
-}
-
-// Improved nearest color: gate by hue group and compare in Lab
+// Simple RGB distance color matching
 function findNearestColor(r: number, g: number, b: number): Group {
-  const { h, s, l } = rgbToHsl(r, g, b);
+  // Convert Figma's 0-1 range to 0-255
+  const R = Math.round(r * 255);
+  const G = Math.round(g * 255);
+  const B = Math.round(b * 255);
 
-  // Debug log for #E3F0FC
-  console.log(`Input RGB: ${r}, ${g}, ${b}`);
-  console.log(`HSL: h=${h.toFixed(1)}, s=${s.toFixed(3)}, l=${l.toFixed(3)}`);
+  let nearestIndex = 0;
+  let nearestDistance = Infinity;
 
-  // Neutrals first - let's be more restrictive
-  const neutral = detectNeutral(h, s, l);
-  if (neutral) {
-    console.log(`Detected as neutral: ${neutral}`);
-    return neutral;
-  }
+  for (let i = 0; i < cssColors.length; i++) {
+    const deltaR = cssColors[i].r - R;
+    const deltaG = cssColors[i].g - G;
+    const deltaB = cssColors[i].b - B;
 
-  const primaryGroup = hueToGroup(h);
-  console.log(`Primary hue group: ${primaryGroup}`);
+    const distance = deltaR * deltaR + deltaG * deltaG + deltaB * deltaB;
 
-  // Let's check ALL colors, not just neighbors, to see what's happening
-  const targetLab = rgbToLab(r, g, b);
-
-  let minD = Number.POSITIVE_INFINITY;
-  let bestGroup: Group = primaryGroup;
-  let closestColor = '';
-
-  for (const color of cssColors) {
-    const lab = rgbToLab(color.r, color.g, color.b);
-    const d = deltaE76(targetLab, lab);
-    if (d < minD) {
-      minD = d;
-      bestGroup = color.group;
-      closestColor = color.name;
+    if (distance < nearestDistance) {
+      nearestDistance = distance;
+      nearestIndex = i;
     }
   }
 
-  console.log(`Closest color: ${closestColor} (${bestGroup}), distance: ${minD.toFixed(2)}`);
-  return bestGroup;
-}
-
-// Helper function to convert RGB to HSB and get brightness value
-function rgbToHsb(r: number, g: number, b: number): [number, number, number] {
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  let h = 0;
-  const s = max === 0 ? 0 : (max - min) / max;
-  const brightness = max;
-
-  if (max !== min) {
-    const d = max - min;
-    switch (max) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
-    }
-    h /= 6;
-  }
-
-  return [h * 360, s * 100, brightness * 100];
+  return cssColors[nearestIndex].group;
 }
 
 // Helper function to find parent group
@@ -4694,6 +4592,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
     // Keep track of created variables and used names
     const createdVariables: string[] = [];
     const usedNames = new Set<string>();
+    let textNodeCounter = 1; // Counter for text node based naming
 
     // Get existing variable names in the collection to avoid duplicates
     const existingVariables = await figma.variables.getLocalVariables();
@@ -4734,7 +4633,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         textNodes.splice(textNodes.indexOf(matchingTextNode), 1);
       } else if (textNodes.length > 0) {
         // If no matching text node but there are text nodes available, use the first one
-        let baseName = `${textNodes[0].characters}${counter++}`;
+        let baseName = `${textNodes[0].characters}${textNodeCounter++}`;
         let finalName = baseName;
         let duplicateCounter = 1;
         while (usedNames.has(finalName)) {

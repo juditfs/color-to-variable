@@ -3,7 +3,7 @@
 interface PluginMessage {
   type: 'create-variable' | 'get-collections';
   collectionId?: string;
-  namingMode?: 'figma-default' | 'auto' | 'manual';
+  namingMode?: 'figma-default' | 'auto' | 'manual' | 'layer-name';
   customName?: string;
   appendMode?: 'increment' | 'color';
 }
@@ -4728,6 +4728,35 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
           // For increment mode, use Figma's default format: space + number
           if (msg.appendMode === 'increment') {
             finalName = `${sanitizeVariableName(msg.customName.trim())} ${duplicateCounter}`;
+          } else {
+            // For color mode, append to the color-appended name
+            finalName = `${baseName}-${duplicateCounter}`;
+          }
+          duplicateCounter++;
+        }
+        variableName = finalName;
+      } else if (msg.namingMode === 'layer-name') {
+        // Use the layer's name as the variable name
+        let baseName = sanitizeVariableName(filledNode.name);
+
+        // If sanitization resulted in empty string, show error and fall back
+        if (!baseName) {
+          figma.notify('Layer name contains only invalid characters. Falling back to auto naming.', { error: true });
+          baseName = generateHSLColorName(fill.color.r, fill.color.g, fill.color.b, usedNames);
+        }
+
+        // Append color match if selected
+        if (msg.appendMode === 'color') {
+          const colorPart = generateHSLColorName(fill.color.r, fill.color.g, fill.color.b, new Set());
+          baseName = `${baseName}-${colorPart}`;
+        }
+
+        let finalName = baseName;
+        let duplicateCounter = 1;
+        while (usedNames.has(finalName)) {
+          // For increment mode, use space + number format
+          if (msg.appendMode === 'increment') {
+            finalName = `${sanitizeVariableName(filledNode.name)} ${duplicateCounter}`;
           } else {
             // For color mode, append to the color-appended name
             finalName = `${baseName}-${duplicateCounter}`;

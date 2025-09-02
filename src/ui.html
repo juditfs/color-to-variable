@@ -358,6 +358,17 @@
 
                 <div class="radio-group-item">
                   <div class="radio-option">
+                    <input type="radio" id="layer-name" name="naming-mode" value="layer-name">
+                    <label for="layer-name">Layer name</label>
+                  </div>
+                  <div class="info-text" id="layer-name-info"
+                    style="margin-left: 18px; margin-top: 2px; display: none;">
+                    Uses the name of each color layer as the variable name.
+                  </div>
+                </div>
+
+                <div class="radio-group-item">
+                  <div class="radio-option">
                     <input type="radio" id="manual-name" name="naming-mode" value="manual">
                     <label for="manual-name">Custom</label>
                   </div>
@@ -554,12 +565,15 @@
           // Hide all info texts first
           document.getElementById('figma-default-info').style.display = 'none';
           document.getElementById('auto-info').style.display = 'none';
+          document.getElementById('layer-name-info').style.display = 'none';
 
           // Show the info text for the selected option
           if (radio.value === 'figma-default') {
             document.getElementById('figma-default-info').style.display = 'block';
           } else if (radio.value === 'auto') {
             document.getElementById('auto-info').style.display = 'block';
+          } else if (radio.value === 'layer-name') {
+            document.getElementById('layer-name-info').style.display = 'block';
           }
           // Custom option doesn't have info text
         });

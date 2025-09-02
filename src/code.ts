@@ -4462,21 +4462,21 @@ function getAncestors(node: BaseNode): BaseNode[] {
 async function generateUniqueCollectionName(): Promise<string> {
   const existingCollections = await figma.variables.getLocalVariableCollections();
   const baseName = "Color to variable";
-  
+
   // Check if base name is available
   if (!existingCollections.some(c => c.name === baseName)) {
     return baseName;
   }
-  
+
   // Find the next available number
   let counter = 2;
   let candidateName = `${baseName} ${counter}`;
-  
+
   while (existingCollections.some(c => c.name === candidateName)) {
     counter++;
     candidateName = `${baseName} ${counter}`;
   }
-  
+
   return candidateName;
 }
 

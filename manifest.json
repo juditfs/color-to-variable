@@ -1,6 +1,6 @@
 {
-  "name": "Color to Variable",
-  "id": "color-to-variable",
+  "name": "Easy Color Variables",
+  "id": "easy-color-varaibles",
   "api": "1.0.0",
   "main": "dist/code.js",
   "ui": "src/ui.html",

@@ -4461,7 +4461,7 @@ function getAncestors(node: BaseNode): BaseNode[] {
 // Helper function to generate unique collection name
 async function generateUniqueCollectionName(): Promise<string> {
   const existingCollections = await figma.variables.getLocalVariableCollections();
-  const baseName = "Color to variable";
+  const baseName = "Colors";
 
   // Check if base name is available
   if (!existingCollections.some(c => c.name === baseName)) {

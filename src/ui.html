@@ -84,22 +84,27 @@
 
     .collection-form-group,
     .naming-form-group,
+    .custom-name-form-group,
+    .duplicate-form-group,
     #groups-container,
     #modes-container {
       display: flex !important;
       flex-direction: row !important;
       gap: 8px;
-      align-items: center;
+      align-items: flex-start;
     }
 
     .collection-form-group label,
     .naming-form-group label,
+    .custom-name-form-group label,
+    .duplicate-form-group label,
     #groups-container label,
     #modes-container label,
     .dropdown-label {
       flex-shrink: 0;
       width: 70px;
       margin-bottom: 0;
+      padding-top: 2px;
     }
 
     #collection,
@@ -332,6 +337,13 @@
       /* Remove margin from last item */
     }
 
+    .radio-group-inline {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+    }
+
   </style>
 </head>
 
@@ -359,7 +371,7 @@
           <p>If no text layer is selected, the plugin will default to one of the options below.</p>
 
           <div class="naming-form-group" style="margin-top: 12px;">
-            <label for="naming-mode" class="dropdown-label">Naming</label>
+            <label for="naming-mode" class="dropdown-label">Options</label>
             <select id="naming-mode">
               <option value="auto">Best guess</option>
               <option value="layer-name">Layer name</option>
@@ -373,25 +385,28 @@
             descriptor (e.g., blue-300-vivid, red-500-muted). May require manual updates.
           </div>
 
-          <div class="form-group hidden custom-options" id="custom-name-row" style="margin-top: 8px;">
-            <label for="custom-name">Variable name</label>
-            <input type="text" id="custom-name" placeholder="My color">
-            <span class="error-message" id="name-error">Enter a variable name</span>
+          <div class="custom-options hidden" id="custom-name-row" style="margin-top: 8px;">
+            <div class="custom-name-form-group">
+              <label for="custom-name" class="dropdown-label">Name</label>
+              <input type="text" id="custom-name" placeholder="My color">
+            </div>
+            <span class="error-message" id="name-error" style="margin-left: 78px;">Enter a variable name</span>
 
-            <label style="margin-top: 8px;">If name already exists</label>
-            <div class="radio-group">
-              <div class="radio-option">
-                <input type="radio" id="append-increment" name="append-mode" value="increment" checked>
-                <label for="append-increment">Append increment</label>
-              </div>
-              <div class="radio-description">My color, My color 2</div>
+            <div class="duplicate-form-group" style="margin-top: 8px;">
+              <label class="dropdown-label">If duplicates</label>
+              <div class="radio-group-inline">
+                <div class="radio-option">
+                  <input type="radio" id="append-increment" name="append-mode" value="increment" checked>
+                  <label for="append-increment">Append increment</label>
+                </div>
+                <div class="radio-description">My color, My color 2</div>
 
-              <!-- Add margin to create space between radio options -->
-              <div class="radio-option" style="margin-top: 4px;">
-                <input type="radio" id="append-color" name="append-mode" value="color">
-                <label for="append-color">Append best guess</label>
+                <div class="radio-option" style="margin-top: 4px;">
+                  <input type="radio" id="append-color" name="append-mode" value="color">
+                  <label for="append-color">Append best guess</label>
+                </div>
+                <div class="radio-description">My color red-500-vivid</div>
               </div>
-              <div class="radio-description">My color red-500-vivid</div>
             </div>
           </div>
 

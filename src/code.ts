@@ -1,13 +1,14 @@
 /// <reference types="@figma/plugin-typings" />
 
 interface PluginMessage {
-  type: 'create-variable' | 'get-collections' | 'get-collection-details';
+  type: 'create-variable' | 'get-collections' | 'get-collection-details' | 'create-group';
   collectionId?: string;
   namingMode?: 'figma-default' | 'auto' | 'manual' | 'layer-name';
   customName?: string;
   appendMode?: 'increment' | 'color';
   groupId?: string;
   modeId?: string;
+  createNewGroup?: boolean;
 }
 
 figma.showUI(__html__, { width: 320, height: 600 });
@@ -4636,6 +4637,48 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
     }
   }
 
+  if (msg.type === 'create-group') {
+    if (!msg.collectionId) {
+      figma.notify('No collection selected');
+      return;
+    }
+
+    try {
+      // Get existing groups to determine next number
+      const allVariables = await figma.variables.getLocalVariables();
+      const collectionVariables = allVariables.filter(v => v.variableCollectionId === msg.collectionId);
+      
+      const existingGroups = new Set<string>();
+      collectionVariables.forEach(variable => {
+        const nameParts = variable.name.split('/');
+        if (nameParts.length > 1) {
+          existingGroups.add(nameParts[0]);
+        }
+      });
+
+      // Generate new group name
+      let groupName = 'New group';
+      let counter = 1;
+      
+      while (existingGroups.has(groupName)) {
+        counter++;
+        groupName = `New group ${counter}`;
+      }
+
+      // Send the new group back to the UI
+      figma.ui.postMessage({
+        type: 'group-created',
+        group: { id: groupName, name: groupName },
+        collectionId: msg.collectionId
+      });
+
+      figma.notify(`Created group: ${groupName}`);
+
+    } catch (error) {
+      figma.notify('Failed to create group');
+    }
+  }
+
   if (msg.type === 'create-variable') {
     // Add validation check at the beginning
     if (msg.namingMode === 'manual' && (!msg.customName || !msg.customName.trim())) {
@@ -4648,6 +4691,40 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
     if (selection.length === 0) {
       figma.notify('Please select at least one layer with a solid fill');
       return;
+    }
+
+    // Handle new group creation if requested
+    let actualGroupId = msg.groupId;
+    if (msg.createNewGroup && msg.collectionId && msg.collectionId !== 'new') {
+      try {
+        // Get existing groups to determine next number
+        const allVariables = await figma.variables.getLocalVariables();
+        const collectionVariables = allVariables.filter(v => v.variableCollectionId === msg.collectionId);
+        
+        const existingGroups = new Set<string>();
+        collectionVariables.forEach(variable => {
+          const nameParts = variable.name.split('/');
+          if (nameParts.length > 1) {
+            existingGroups.add(nameParts[0]);
+          }
+        });
+
+        // Generate new group name
+        let groupName = 'New group';
+        let counter = 1;
+        
+        while (existingGroups.has(groupName)) {
+          counter++;
+          groupName = `New group ${counter}`;
+        }
+
+        actualGroupId = groupName;
+        figma.notify(`Created group: ${groupName}`);
+
+      } catch (error) {
+        figma.notify('Failed to create group, using default placement');
+        actualGroupId = undefined;
+      }
     }
 
     // Show working message
@@ -4825,6 +4902,11 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       } else {
         // Auto mode - use Tailwind-style scale naming (only when no text nodes)
         variableName = generateHSLColorName(fill.color.r, fill.color.g, fill.color.b, usedNames);
+      }
+
+      // Apply group prefix if specified
+      if (actualGroupId) {
+        variableName = `${actualGroupId}/${variableName}`;
       }
 
       // Add the final name to used names set

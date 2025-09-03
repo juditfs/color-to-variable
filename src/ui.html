@@ -419,7 +419,7 @@
           <div class="form-group" id="groups-container" style="margin-top: 8px; display: none;">
             <label for="groups">Group</label>
             <select id="groups">
-              <option value="">Select a group (optional)</option>
+              <option value="">All Variables</option>
             </select>
           </div>
 
@@ -427,7 +427,6 @@
           <div class="form-group" id="modes-container" style="margin-top: 8px; display: none;">
             <label for="modes">Mode</label>
             <select id="modes">
-              <option value="">Select a mode</option>
             </select>
           </div>
         </div>
@@ -449,6 +448,8 @@
         addNewCollectionToDropdown(msg.collection);
       } else if (msg.type === 'update-collection-details') {
         updateGroupsAndModes(msg.groups, msg.modes);
+      } else if (msg.type === 'group-created') {
+        addNewGroupToDropdown(msg.group);
       }
     };
 
@@ -543,7 +544,7 @@
       const modesSelect = document.getElementById('modes');
 
       // Update groups dropdown
-      groupsSelect.innerHTML = '<option value="">Select a group (optional)</option>';
+      groupsSelect.innerHTML = '<option value="">All variables</option>';
       groups.forEach(group => {
         const option = document.createElement('option');
         option.value = group.id;
@@ -551,8 +552,14 @@
         groupsSelect.appendChild(option);
       });
 
+      // Add "Create new group" option at the end
+      const createGroupOption = document.createElement('option');
+      createGroupOption.value = 'create-new-group';
+      createGroupOption.textContent = 'Create new group';
+      groupsSelect.appendChild(createGroupOption);
+
       // Update modes dropdown
-      modesSelect.innerHTML = '<option value="">Select a mode</option>';
+      modesSelect.innerHTML = '';
       modes.forEach(mode => {
         const option = document.createElement('option');
         option.value = mode.id;
@@ -561,11 +568,8 @@
       });
 
       // Show the dropdowns if there are groups or modes
-      if (groups.length > 0) {
-        groupsContainer.style.display = 'block';
-      } else {
-        groupsContainer.style.display = 'none';
-      }
+      // Always show groups dropdown since we have "Create new group" option
+      groupsContainer.style.display = 'block';
 
       if (modes.length > 0) {
         modesContainer.style.display = 'block';
@@ -576,6 +580,32 @@
       } else {
         modesContainer.style.display = 'none';
       }
+
+      // Add event listener to groups dropdown (no immediate action needed)
+      groupsSelect.removeEventListener('change', handleGroupsChange); // Remove existing listener if any
+    }
+
+    function addNewGroupToDropdown(newGroup) {
+      const groupsSelect = document.getElementById('groups');
+      
+      // Remove the "Create new group" option temporarily
+      const createNewOption = groupsSelect.querySelector('option[value="create-new-group"]');
+      if (createNewOption) {
+        createNewOption.remove();
+      }
+
+      // Add the new group
+      const option = document.createElement('option');
+      option.value = newGroup.id;
+      option.textContent = newGroup.name;
+      option.selected = true; // Select the newly created group
+      groupsSelect.appendChild(option);
+
+      // Re-add "Create new group" option at the end
+      const createGroupOption = document.createElement('option');
+      createGroupOption.value = 'create-new-group';
+      createGroupOption.textContent = 'Create new group';
+      groupsSelect.appendChild(createGroupOption);
     }
 
     function hideGroupsAndModes() {
@@ -636,6 +666,9 @@
       const selectedGroup = document.getElementById('groups').value;
       const selectedMode = document.getElementById('modes').value;
 
+      // Check if user wants to create a new group
+      const createNewGroup = selectedGroup === 'create-new-group';
+
       parent.postMessage({
         pluginMessage: {
           type: 'create-variable',
@@ -643,8 +676,9 @@
           namingMode: namingMode,
           customName: customNameInput.value,
           appendMode: document.querySelector('input[name="append-mode"]:checked')?.value,
-          groupId: selectedGroup || undefined,
-          modeId: selectedMode || undefined
+          groupId: createNewGroup ? undefined : (selectedGroup || undefined),
+          modeId: selectedMode || undefined,
+          createNewGroup: createNewGroup
         }
       }, '*');
     };

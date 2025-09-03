@@ -197,6 +197,34 @@
       /* border-left: 3px solid #18A0FB; */
     }
 
+    .info-panel {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #F8F9FA;
+      border: 1px solid #E5E5E5;
+      border-radius: 6px;
+      padding: 12px;
+      margin: 8px 0;
+    }
+
+    .info-illustration {
+      flex-shrink: 0;
+    }
+
+    .info-illustration img {
+      width: 32px;
+      height: 32px;
+      display: block;
+    }
+
+    .info-text-content {
+      font-size: 11px;
+      color: #666;
+      line-height: 1.4;
+      flex: 1;
+    }
+
     .expandable-panel {
       /* border: 1px solid #E5E5E5; */
       border-radius: 4px;
@@ -442,8 +470,15 @@
         <div class="step-number">✏️</div>
         <div class="step-content">
           <div class="step-heading">Name your variables</div>
-          Select 1 or several text layers to use their text as variable names. They must be grouped with their
-          corresponding color layer.
+          <div class="info-panel">
+            <div class="info-illustration">
+              <img src="illustration_text.svg" alt="Text layers illustration">
+            </div>
+            <div class="info-text-content">
+              Select 1 or several text layers to use their text as variable names. They must be grouped with their
+              corresponding color layer.
+            </div>
+          </div>
           <p>If no text layer is selected, the plugin will default to one of the options below.</p>
 
           <div class="naming-form-group" style="margin-top: 12px;">

@@ -1,11 +1,13 @@
 /// <reference types="@figma/plugin-typings" />
 
 interface PluginMessage {
-  type: 'create-variable' | 'get-collections';
+  type: 'create-variable' | 'get-collections' | 'get-collection-details';
   collectionId?: string;
   namingMode?: 'figma-default' | 'auto' | 'manual' | 'layer-name';
   customName?: string;
   appendMode?: 'increment' | 'color';
+  groupId?: string;
+  modeId?: string;
 }
 
 figma.showUI(__html__, { width: 320, height: 600 });
@@ -4576,6 +4578,62 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       collections: collections.map(c => ({ id: c.id, name: c.name })),
       defaultCollectionId: defaultCollectionId
     });
+  }
+
+  if (msg.type === 'get-collection-details') {
+    if (!msg.collectionId) {
+      figma.ui.postMessage({
+        type: 'update-collection-details',
+        groups: [],
+        modes: []
+      });
+      return;
+    }
+
+    try {
+      const collection = await figma.variables.getVariableCollectionById(msg.collectionId);
+
+      if (!collection) {
+        figma.ui.postMessage({
+          type: 'update-collection-details',
+          groups: [],
+          modes: []
+        });
+        return;
+      }
+
+      // Get groups (variable groups in the collection)
+      const allVariables = await figma.variables.getLocalVariables();
+      const collectionVariables = allVariables.filter(v => v.variableCollectionId === msg.collectionId);
+
+      // Extract unique groups from variable names (assuming group structure like "colors/primary" or "spacing/small")
+      const groups = new Set<string>();
+      collectionVariables.forEach(variable => {
+        const nameParts = variable.name.split('/');
+        if (nameParts.length > 1) {
+          groups.add(nameParts[0]); // First part is the group
+        }
+      });
+
+      // Get modes
+      const modes = collection.modes.map(mode => ({
+        id: mode.modeId,
+        name: mode.name
+      }));
+
+      figma.ui.postMessage({
+        type: 'update-collection-details',
+        groups: Array.from(groups).map(group => ({ id: group, name: group })),
+        modes: modes
+      });
+
+    } catch (error) {
+      figma.ui.postMessage({
+        type: 'update-collection-details',
+        groups: [],
+        modes: []
+      });
+    }
   }
 
   if (msg.type === 'create-variable') {

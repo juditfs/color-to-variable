@@ -414,6 +414,22 @@
               <option value="new">Create new collection</option>
             </select>
           </div>
+
+          <!-- Groups dropdown -->
+          <div class="form-group" id="groups-container" style="margin-top: 8px; display: none;">
+            <label for="groups">Group</label>
+            <select id="groups">
+              <option value="">Select a group (optional)</option>
+            </select>
+          </div>
+
+          <!-- Modes dropdown -->
+          <div class="form-group" id="modes-container" style="margin-top: 8px; display: none;">
+            <label for="modes">Mode</label>
+            <select id="modes">
+              <option value="">Select a mode</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
@@ -431,6 +447,8 @@
       } else if (msg.type === 'collection-created') {
         // Add the newly created collection to the dropdown and select it
         addNewCollectionToDropdown(msg.collection);
+      } else if (msg.type === 'update-collection-details') {
+        updateGroupsAndModes(msg.groups, msg.modes);
       }
     };
 
@@ -466,6 +484,21 @@
       }
 
       select.appendChild(newOption);
+
+      // Request collection details for the selected collection
+      if (hasDefault && defaultCollectionId) {
+        requestCollectionDetails(defaultCollectionId);
+      }
+
+      // Add change event listener to collection dropdown
+      select.addEventListener('change', (event) => {
+        const selectedCollectionId = event.target.value;
+        if (selectedCollectionId && selectedCollectionId !== 'new') {
+          requestCollectionDetails(selectedCollectionId);
+        } else {
+          hideGroupsAndModes();
+        }
+      });
     }
 
     function addNewCollectionToDropdown(newCollection) {
@@ -489,6 +522,65 @@
       newOption.value = 'new';
       newOption.textContent = 'Create new collection';
       select.appendChild(newOption);
+
+      // Request details for the newly created collection
+      requestCollectionDetails(newCollection.id);
+    }
+
+    function requestCollectionDetails(collectionId) {
+      parent.postMessage({
+        pluginMessage: {
+          type: 'get-collection-details',
+          collectionId: collectionId
+        }
+      }, '*');
+    }
+
+    function updateGroupsAndModes(groups, modes) {
+      const groupsContainer = document.getElementById('groups-container');
+      const modesContainer = document.getElementById('modes-container');
+      const groupsSelect = document.getElementById('groups');
+      const modesSelect = document.getElementById('modes');
+
+      // Update groups dropdown
+      groupsSelect.innerHTML = '<option value="">Select a group (optional)</option>';
+      groups.forEach(group => {
+        const option = document.createElement('option');
+        option.value = group.id;
+        option.textContent = group.name;
+        groupsSelect.appendChild(option);
+      });
+
+      // Update modes dropdown
+      modesSelect.innerHTML = '<option value="">Select a mode</option>';
+      modes.forEach(mode => {
+        const option = document.createElement('option');
+        option.value = mode.id;
+        option.textContent = mode.name;
+        modesSelect.appendChild(option);
+      });
+
+      // Show the dropdowns if there are groups or modes
+      if (groups.length > 0) {
+        groupsContainer.style.display = 'block';
+      } else {
+        groupsContainer.style.display = 'none';
+      }
+
+      if (modes.length > 0) {
+        modesContainer.style.display = 'block';
+        // Select the first mode by default if available
+        if (modes.length === 1) {
+          modesSelect.value = modes[0].id;
+        }
+      } else {
+        modesContainer.style.display = 'none';
+      }
+    }
+
+    function hideGroupsAndModes() {
+      document.getElementById('groups-container').style.display = 'none';
+      document.getElementById('modes-container').style.display = 'none';
     }
 
     // Handle naming mode toggle
@@ -540,13 +632,19 @@
         errorMessage.style.display = 'none';
       }
 
+      // Get selected group and mode
+      const selectedGroup = document.getElementById('groups').value;
+      const selectedMode = document.getElementById('modes').value;
+
       parent.postMessage({
         pluginMessage: {
           type: 'create-variable',
           collectionId: document.getElementById('collection').value,
           namingMode: namingMode,
           customName: customNameInput.value,
-          appendMode: document.querySelector('input[name="append-mode"]:checked')?.value
+          appendMode: document.querySelector('input[name="append-mode"]:checked')?.value,
+          groupId: selectedGroup || undefined,
+          modeId: selectedMode || undefined
         }
       }, '*');
     };

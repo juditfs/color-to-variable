@@ -354,13 +354,6 @@
       flex: 1;
     }
 
-    .naming-description-container {
-      position: relative;
-      display: flex;
-      align-items: flex-start;
-      gap: 6px;
-    }
-
     .naming-controls {
       display: flex;
       align-items: center;
@@ -472,13 +465,6 @@
                   Color, Color 2...
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div class="naming-description-container" style="margin-top: 4px; margin-left: 78px;">
-            <div class="info-text" id="naming-description">
-              Analyzes color values to determine the closest base color, and adds lightness scale and saturation
-              descriptor (e.g., blue-300-vivid, red-500-muted). May require manual updates.
             </div>
           </div>
 
@@ -773,20 +759,8 @@
     // Initialize naming mode description and event listener
     function updateNamingDescription() {
       const namingMode = document.getElementById('naming-mode').value;
-      const descriptionElement = document.getElementById('naming-description');
       const infoIconContainer = document.getElementById('info-icon-container');
       const figmaInfoIconContainer = document.getElementById('figma-info-icon-container');
-
-      const descriptions = {
-        'auto': 'Blue-300-vivid, Red-500-muted... May require manual updates.',
-        'layer-name': 'Uses the name of each color layer as the variable name.',
-        'figma-default': 'Color, Color 2...',
-        'manual': 'Enter a custom name for your variable.'
-      };
-
-      if (descriptionElement) {
-        descriptionElement.textContent = descriptions[namingMode];
-      }
 
       // Show appropriate info icon based on the selected mode
       if (infoIconContainer) {

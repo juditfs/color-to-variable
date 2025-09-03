@@ -86,8 +86,9 @@
     #groups-container,
     #modes-container {
       display: flex !important;
-      flex-direction: column !important;
-      gap: 4px;
+      flex-direction: row !important;
+      gap: 8px;
+      align-items: center;
     }
 
     .collection-form-group label,
@@ -95,7 +96,7 @@
     #modes-container label,
     .dropdown-label {
       flex-shrink: 0;
-      width: auto;
+      width: 70px;
       margin-bottom: 0;
     }
 
@@ -256,7 +257,7 @@
 
     .step-row {
       display: flex;
-      gap: 12px;
+      gap: 4px;
       margin-bottom: 16px;
       align-items: flex-start;
     }
@@ -268,7 +269,7 @@
       min-width: 20px;
       flex-shrink: 0;
       line-height: 1.4;
-      padding-top: 1px;
+      /* padding-top: 1px; */
     }
 
     .step-content {

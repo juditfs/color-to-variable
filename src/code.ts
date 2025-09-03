@@ -4647,7 +4647,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       // Get existing groups to determine next number
       const allVariables = await figma.variables.getLocalVariables();
       const collectionVariables = allVariables.filter(v => v.variableCollectionId === msg.collectionId);
-      
+
       const existingGroups = new Set<string>();
       collectionVariables.forEach(variable => {
         const nameParts = variable.name.split('/');
@@ -4659,7 +4659,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       // Generate new group name
       let groupName = 'New group';
       let counter = 1;
-      
+
       while (existingGroups.has(groupName)) {
         counter++;
         groupName = `New group ${counter}`;
@@ -4700,7 +4700,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         // Get existing groups to determine next number
         const allVariables = await figma.variables.getLocalVariables();
         const collectionVariables = allVariables.filter(v => v.variableCollectionId === msg.collectionId);
-        
+
         const existingGroups = new Set<string>();
         collectionVariables.forEach(variable => {
           const nameParts = variable.name.split('/');
@@ -4712,7 +4712,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         // Generate new group name
         let groupName = 'New group';
         let counter = 1;
-        
+
         while (existingGroups.has(groupName)) {
           counter++;
           groupName = `New group ${counter}`;

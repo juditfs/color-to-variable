@@ -340,6 +340,70 @@
       flex: 1;
     }
 
+    .naming-description-container {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .naming-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-icon-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .info-icon {
+      color: #666;
+      font-size: 14px;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s ease;
+    }
+
+    .info-icon:hover {
+      color: #18A0FB;
+    }
+
+    .tooltip {
+      position: absolute;
+      top: 20px;
+      left: -250px;
+      width: 280px;
+      background: #333;
+      color: white;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      line-height: 1.4;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+      pointer-events: none;
+    }
+
+    .tooltip::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: 250px;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 5px solid #333;
+    }
+
+    .info-icon:hover+.tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+
   </style>
 </head>
 
@@ -368,17 +432,34 @@
 
           <div class="naming-form-group" style="margin-top: 12px;">
             <label for="naming-mode" class="dropdown-label">Options</label>
-            <select id="naming-mode">
-              <option value="auto">Best guess</option>
-              <option value="layer-name">Layer name</option>
-              <option value="figma-default">Figma default</option>
-              <option value="manual">Custom</option>
-            </select>
+            <div class="naming-controls">
+              <select id="naming-mode">
+                <option value="auto">Best guess</option>
+                <option value="layer-name">Layer name</option>
+                <option value="figma-default">Figma default</option>
+                <option value="manual">Custom</option>
+              </select>
+              <div class="info-icon-container" id="info-icon-container" style="display: none;">
+                <span class="info-icon" id="info-icon">ⓘ</span>
+                <div class="tooltip" id="tooltip">
+                  <strong>How Best Guess Works:</strong><br><br>
+                  • Analyzes HSL values to find the closest base color<br>
+                  • Maps lightness to a scale (100-900)<br>
+                  • Adds saturation descriptors (vivid, muted, etc.)<br><br>
+                  <strong>Examples:</strong><br>
+                  Light blue → blue-300-vivid<br>
+                  Dark red → red-700-muted<br><br>
+                  <em>Note: May require manual adjustments for accuracy</em>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div class="info-text" id="naming-description" style="margin-top: 4px; margin-left: 78px;">
-            Analyzes color values to determine the closest base color, and adds lightness scale and saturation
-            descriptor (e.g., blue-300-vivid, red-500-muted). May require manual updates.
+          <div class="naming-description-container" style="margin-top: 4px; margin-left: 78px;">
+            <div class="info-text" id="naming-description">
+              Analyzes color values to determine the closest base color, and adds lightness scale and saturation
+              descriptor (e.g., blue-300-vivid, red-500-muted). May require manual updates.
+            </div>
           </div>
 
           <div class="custom-options hidden" id="custom-name-row" style="margin-top: 8px;">
@@ -673,6 +754,7 @@
     function updateNamingDescription() {
       const namingMode = document.getElementById('naming-mode').value;
       const descriptionElement = document.getElementById('naming-description');
+      const infoIconContainer = document.getElementById('info-icon-container');
 
       const descriptions = {
         'auto': 'Analyzes color values to determine the closest base color, and adds lightness scale and saturation descriptor (e.g., blue-300-vivid, red-500-muted). May require manual updates.',
@@ -683,6 +765,11 @@
 
       if (descriptionElement) {
         descriptionElement.textContent = descriptions[namingMode];
+      }
+
+      // Show info icon only for 'auto' (best guess) mode
+      if (infoIconContainer) {
+        infoIconContainer.style.display = namingMode === 'auto' ? 'inline-block' : 'none';
       }
     }
 

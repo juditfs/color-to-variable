@@ -4620,13 +4620,13 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       console.log('Raw collection.modes:', collection.modes);
       const modes = collection.modes.map((mode, index) => {
         console.log(`Processing mode ${index} - ID: ${mode.modeId}, Name: "${mode.name}"`);
-        
+
         // For single mode collections, use "Value" as the default name if it's generic
         let modeName = mode.name;
         if (collection.modes.length === 1 && (mode.name === 'Mode 1' || mode.name === 'Mode' || !mode.name || mode.name.trim() === '')) {
           modeName = 'Value';
         }
-        
+
         return {
           id: mode.modeId,
           name: modeName

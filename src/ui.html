@@ -83,6 +83,7 @@
     }
 
     .collection-form-group,
+    .naming-form-group,
     #groups-container,
     #modes-container {
       display: flex !important;
@@ -92,6 +93,7 @@
     }
 
     .collection-form-group label,
+    .naming-form-group label,
     #groups-container label,
     #modes-container label,
     .dropdown-label {
@@ -101,6 +103,7 @@
     }
 
     #collection,
+    #naming-mode,
     #groups,
     #modes {
       width: 150px;
@@ -355,75 +358,39 @@
           corresponding color layer.
           <p>If no text layer is selected, the plugin will default to one of the options below.</p>
 
-          <div class="expandable-panel">
-            <div class="clickable-text" onclick="toggleExpandable()">
-              <div class="expandable-arrow"></div>
-              <span>Default naming options</span>
-            </div>
-            <div class="expandable-content" id="other-options">
-              <div class="radio-group">
-                <div class="radio-group-item">
-                  <div class="radio-option">
-                    <input type="radio" id="auto-name" name="naming-mode" value="auto" checked>
-                    <label for="auto-name">Best guess</label>
-                  </div>
-                  <div class="info-text" id="auto-info" style="margin-left: 18px; margin-top: 2px; display: none;">
-                    Analyzes color values to determine the closest base color, and adds lightness scale and saturation
-                    descriptor (e.g., blue-300-vivid, red-500-muted). May require manual updates.
-                  </div>
-                </div>
+          <div class="naming-form-group" style="margin-top: 12px;">
+            <label for="naming-mode" class="dropdown-label">Naming</label>
+            <select id="naming-mode">
+              <option value="auto">Best guess</option>
+              <option value="layer-name">Layer name</option>
+              <option value="figma-default">Figma default</option>
+              <option value="manual">Custom</option>
+            </select>
+          </div>
 
-                <div class="radio-group-item">
-                  <div class="radio-option">
-                    <input type="radio" id="layer-name" name="naming-mode" value="layer-name">
-                    <label for="layer-name">Layer name</label>
-                  </div>
-                  <div class="info-text" id="layer-name-info"
-                    style="margin-left: 18px; margin-top: 2px; display: none;">
-                    Uses the name of each color layer as the variable name.
-                  </div>
-                </div>
+          <div class="info-text" id="naming-description" style="margin-top: 4px; margin-left: 78px;">
+            Analyzes color values to determine the closest base color, and adds lightness scale and saturation descriptor (e.g., blue-300-vivid, red-500-muted). May require manual updates.
+          </div>
 
-                <div class="radio-group-item">
-                  <div class="radio-option">
-                    <input type="radio" id="figma-default" name="naming-mode" value="figma-default">
-                    <label for="figma-default">Figma default</label>
-                  </div>
-                  <div class="info-text" id="figma-default-info"
-                    style="margin-left: 18px; margin-top: 2px; display: none;">
-                    Color, Color 2...
-                  </div>
-                </div>
+          <div class="form-group hidden custom-options" id="custom-name-row" style="margin-top: 8px;">
+            <label for="custom-name">Variable name</label>
+            <input type="text" id="custom-name" placeholder="My color">
+            <span class="error-message" id="name-error">Enter a variable name</span>
 
-                <div class="radio-group-item">
-                  <div class="radio-option">
-                    <input type="radio" id="manual-name" name="naming-mode" value="manual">
-                    <label for="manual-name">Custom</label>
-                  </div>
-
-                  <div class="form-group hidden custom-options" id="custom-name-row">
-                    <label for="custom-name">Variable name</label>
-                    <input type="text" id="custom-name" placeholder="My color">
-                    <span class="error-message" id="name-error">Enter a variable name</span>
-
-                    <label style="margin-top: 8px;">If name already exists</label>
-                    <div class="radio-group">
-                      <div class="radio-option">
-                        <input type="radio" id="append-increment" name="append-mode" value="increment" checked>
-                        <label for="append-increment">Append increment</label>
-                      </div>
-                      <div class="radio-description">My color, My color 2</div>
-
-                      <!-- Add margin to create space between radio options -->
-                      <div class="radio-option" style="margin-top: 4px;">
-                        <input type="radio" id="append-color" name="append-mode" value="color">
-                        <label for="append-color">Append best guess</label>
-                      </div>
-                      <div class="radio-description">My color red-500-vivid</div>
-                    </div>
-                  </div>
-                </div>
+            <label style="margin-top: 8px;">If name already exists</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="append-increment" name="append-mode" value="increment" checked>
+                <label for="append-increment">Append increment</label>
               </div>
+              <div class="radio-description">My color, My color 2</div>
+
+              <!-- Add margin to create space between radio options -->
+              <div class="radio-option" style="margin-top: 4px;">
+                <input type="radio" id="append-color" name="append-mode" value="color">
+                <label for="append-color">Append best guess</label>
+              </div>
+              <div class="radio-description">My color red-500-vivid</div>
             </div>
           </div>
 
@@ -641,33 +608,33 @@
     }
 
     // Handle naming mode toggle
-    document.querySelectorAll('input[name="naming-mode"]').forEach(radio => {
-      radio.addEventListener('change', () => {
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('naming-mode').addEventListener('change', (event) => {
         const customNameRow = document.getElementById('custom-name-row');
         const customNameInput = document.getElementById('custom-name');
-        const autoInfo = document.getElementById('auto-info');
+        const descriptionElement = document.getElementById('naming-description');
+        
+        // Update description based on selected option
+        const descriptions = {
+          'auto': 'Analyzes color values to determine the closest base color, and adds lightness scale and saturation descriptor (e.g., blue-300-vivid, red-500-muted). May require manual updates.',
+          'layer-name': 'Uses the name of each color layer as the variable name.',
+          'figma-default': 'Color, Color 2...',
+          'manual': 'Enter a custom name for your variable.'
+        };
+        
+        descriptionElement.textContent = descriptions[event.target.value];
 
-        if (radio.value === 'manual') {
+        if (event.target.value === 'manual') {
           customNameRow.classList.remove('hidden');
-          autoInfo.classList.add('hidden');
           customNameInput.focus();
         } else {
           customNameRow.classList.add('hidden');
-          autoInfo.classList.remove('hidden');
         }
       });
     });
 
-    function toggleExpandable() {
-      const content = document.getElementById('other-options');
-      const arrow = document.querySelector('.expandable-arrow');
-
-      content.classList.toggle('expanded');
-      arrow.classList.toggle('expanded');
-    }
-
     document.getElementById('create').onclick = () => {
-      const namingMode = document.querySelector('input[name="naming-mode"]:checked').value;
+      const namingMode = document.getElementById('naming-mode').value;
       const customNameInput = document.getElementById('custom-name');
       const customNameLabel = document.querySelector('label[for="custom-name"]');
       const errorMessage = document.getElementById('name-error');
@@ -686,6 +653,8 @@
         // Remove error styling if valid
         customNameInput.classList.remove('error');
         customNameLabel.classList.remove('error');
+        errorMessage.style.display = 'none';
+      }
         errorMessage.style.display = 'none';
       }
 
@@ -715,31 +684,6 @@
       e.target.classList.remove('error');
       document.querySelector('label[for="custom-name"]').classList.remove('error');
       document.getElementById('name-error').style.display = 'none';
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-      // Handle radio button changes for naming options
-      document.querySelectorAll('input[name="naming-mode"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-          // Hide all info texts first
-          document.getElementById('figma-default-info').style.display = 'none';
-          document.getElementById('auto-info').style.display = 'none';
-          document.getElementById('layer-name-info').style.display = 'none';
-
-          // Show the info text for the selected option
-          if (radio.value === 'figma-default') {
-            document.getElementById('figma-default-info').style.display = 'block';
-          } else if (radio.value === 'auto') {
-            document.getElementById('auto-info').style.display = 'block';
-          } else if (radio.value === 'layer-name') {
-            document.getElementById('layer-name-info').style.display = 'block';
-          }
-          // Custom option doesn't have info text
-        });
-      });
-
-      // Show the default info text on page load (since auto is checked by default)
-      document.getElementById('auto-info').style.display = 'block';
     });
   </script>
 </body>

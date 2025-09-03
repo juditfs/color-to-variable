@@ -212,7 +212,7 @@
       flex-shrink: 0;
     }
 
-    .info-illustration img {
+    .info-illustration svg {
       width: 32px;
       height: 32px;
       display: block;
@@ -472,17 +472,24 @@
           <div class="step-heading">Name your variables</div>
           <div class="info-panel">
             <div class="info-illustration">
-              <img src="illustration_text.svg" alt="Text layers illustration">
+              <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M38.25 1.75V38.25H1.75V1.75H38.25Z" fill="white" stroke="#448BF8" stroke-width="0.5" />
+                <rect x="0.75" y="36.75" width="2.5" height="2.5" fill="white" stroke="#448BF8" stroke-width="0.5" />
+                <rect x="36.75" y="36.75" width="2.5" height="2.5" fill="white" stroke="#448BF8" stroke-width="0.5" />
+                <rect x="36.75" y="0.75" width="2.5" height="2.5" fill="white" stroke="#448BF8" stroke-width="0.5" />
+                <rect x="0.75" y="0.75" width="2.5" height="2.5" fill="white" stroke="#448BF8" stroke-width="0.5" />
+                <path d="M10 13.0303V10H20M20 10H30V13.0303M20 10V30M20 30H17.2727M20 30H22.7273" stroke="black"
+                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
             </div>
             <div class="info-text-content">
-              Select 1 or several text layers to use their text as variable names. They must be grouped with their
-              corresponding color layer.
+              You can select text layers as variable names. Best if grouped with their respective color layer.
             </div>
           </div>
           <p>If no text layer is selected, the plugin will default to one of the options below.</p>
 
           <div class="naming-form-group" style="margin-top: 12px;">
-            <label for="naming-mode" class="dropdown-label">Options</label>
+            <label for="naming-mode" class="dropdown-label">Fallback</label>
             <div class="naming-controls">
               <select id="naming-mode">
                 <option value="auto">Best guess</option>

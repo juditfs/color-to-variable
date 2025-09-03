@@ -22,6 +22,20 @@
 
     .form-content {
       flex: 1;
+    }
+
+    .info-icon:hover+.tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #figma-info-icon:hover+#figma-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .form-content {
+      flex: 1;
       overflow-y: auto;
       padding-right: 12px;
       margin-bottom: 12px;
@@ -452,6 +466,12 @@
                   <em>Note: May require manual adjustments for accuracy</em>
                 </div>
               </div>
+              <div class="info-icon-container" id="figma-info-icon-container" style="display: none;">
+                <span class="info-icon" id="figma-info-icon">ⓘ</span>
+                <div class="tooltip" id="figma-tooltip">
+                  Color, Color 2...
+                </div>
+              </div>
             </div>
           </div>
 
@@ -755,9 +775,10 @@
       const namingMode = document.getElementById('naming-mode').value;
       const descriptionElement = document.getElementById('naming-description');
       const infoIconContainer = document.getElementById('info-icon-container');
+      const figmaInfoIconContainer = document.getElementById('figma-info-icon-container');
 
       const descriptions = {
-        'auto': 'Analyzes color values to determine the closest base color, and adds lightness scale and saturation descriptor (e.g., blue-300-vivid, red-500-muted). May require manual updates.',
+        'auto': 'Blue-300-vivid, Red-500-muted... May require manual updates.',
         'layer-name': 'Uses the name of each color layer as the variable name.',
         'figma-default': 'Color, Color 2...',
         'manual': 'Enter a custom name for your variable.'
@@ -767,9 +788,13 @@
         descriptionElement.textContent = descriptions[namingMode];
       }
 
-      // Show info icon only for 'auto' (best guess) mode
+      // Show appropriate info icon based on the selected mode
       if (infoIconContainer) {
         infoIconContainer.style.display = namingMode === 'auto' ? 'inline-block' : 'none';
+      }
+
+      if (figmaInfoIconContainer) {
+        figmaInfoIconContainer.style.display = namingMode === 'figma-default' ? 'inline-block' : 'none';
       }
     }
 

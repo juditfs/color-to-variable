@@ -85,19 +85,21 @@
     .collection-form-group,
     #groups-container,
     #modes-container {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 8px;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 4px;
     }
 
     .collection-form-group label,
     #groups-container label,
-    #modes-container label {
+    #modes-container label,
+    .dropdown-label {
       flex-shrink: 0;
-      width: 70px;
+      width: auto;
+      margin-bottom: 0;
     }
 
+    #collection,
     #groups,
     #modes {
       width: 150px;
@@ -434,23 +436,23 @@
           Choose which collection to save the variable to.
 
           <div class="collection-form-group">
-            <label for="collection">Collection</label>
+            <label for="collection" class="dropdown-label">Collection</label>
             <select id="collection">
               <option value="new">Create new collection</option>
             </select>
           </div>
 
           <!-- Groups dropdown -->
-          <div class="form-group" id="groups-container" style="margin-top: 8px; display: none;">
-            <label for="groups">Group</label>
+          <div id="groups-container" style="margin-top: 8px; display: none;">
+            <label for="groups" class="dropdown-label">Group</label>
             <select id="groups">
               <option value="">All Variables</option>
             </select>
           </div>
 
           <!-- Modes dropdown -->
-          <div class="form-group" id="modes-container" style="margin-top: 8px; display: none;">
-            <label for="modes">Mode</label>
+          <div id="modes-container" style="margin-top: 8px; display: none;">
+            <label for="modes" class="dropdown-label">Mode</label>
             <select id="modes">
             </select>
           </div>

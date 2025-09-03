@@ -622,7 +622,6 @@
           customNameInput.classList.add('error');
           customNameLabel.classList.add('error');
           errorMessage.style.display = 'block';
-          figma.notify('Please enter a variable name');
           return;
         }
         // Remove error styling if valid
@@ -630,28 +629,26 @@
         customNameLabel.classList.remove('error');
         errorMessage.style.display = 'none';
       }
-      errorMessage.style.display = 'none';
-    }
 
-    // Get selected group and mode
-    const selectedGroup = document.getElementById('groups').value;
-    const selectedMode = document.getElementById('modes').value;
+      // Get selected group and mode
+      const selectedGroup = document.getElementById('groups').value;
+      const selectedMode = document.getElementById('modes').value;
 
-    // Check if user wants to create a new group
-    const createNewGroup = selectedGroup === 'create-new-group';
+      // Check if user wants to create a new group
+      const createNewGroup = selectedGroup === 'create-new-group';
 
-    parent.postMessage({
-      pluginMessage: {
-        type: 'create-variable',
-        collectionId: document.getElementById('collection').value,
-        namingMode: namingMode,
-        customName: customNameInput.value,
-        appendMode: document.querySelector('input[name="append-mode"]:checked')?.value,
-        groupId: createNewGroup ? undefined : (selectedGroup || undefined),
-        modeId: selectedMode || undefined,
-        createNewGroup: createNewGroup
-      }
-    }, '*');
+      parent.postMessage({
+        pluginMessage: {
+          type: 'create-variable',
+          collectionId: document.getElementById('collection').value,
+          namingMode: namingMode,
+          customName: customNameInput.value,
+          appendMode: document.querySelector('input[name="append-mode"]:checked')?.value,
+          groupId: createNewGroup ? undefined : (selectedGroup || undefined),
+          modeId: selectedMode || undefined,
+          createNewGroup: createNewGroup
+        }
+      }, '*');
     };
 
     // Add input handler to remove error state when user starts typing
@@ -673,23 +670,44 @@
         'manual': 'Enter a custom name for your variable.'
       };
 
-      descriptionElement.textContent = descriptions[namingMode];
+      if (descriptionElement) {
+        descriptionElement.textContent = descriptions[namingMode];
+      }
     }
 
-    // Add event listener for naming mode changes
-    document.getElementById('naming-mode').addEventListener('change', function (event) {
+    // Wait for DOM to be ready, then attach event listener
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeNamingMode);
+    } else {
+      initializeNamingMode();
+    }
+
+    function initializeNamingMode() {
+      const namingModeSelect = document.getElementById('naming-mode');
+      if (!namingModeSelect) return;
+
       const customNameRow = document.getElementById('custom-name-row');
       const customNameInput = document.getElementById('custom-name');
 
+      // Initialize description and custom row visibility
       updateNamingDescription();
-
-      if (event.target.value === 'manual') {
-        customNameRow.classList.remove('hidden');
-        customNameInput.focus();
+      if (namingModeSelect.value === 'manual') {
+        customNameRow?.classList.remove('hidden');
       } else {
-        customNameRow.classList.add('hidden');
+        customNameRow?.classList.add('hidden');
       }
-    });
+
+      namingModeSelect.addEventListener('change', (event) => {
+        console.debug('naming-mode changed to', event.target.value);
+        updateNamingDescription();
+        if (event.target.value === 'manual') {
+          customNameRow?.classList.remove('hidden');
+          customNameInput?.focus();
+        } else {
+          customNameRow?.classList.add('hidden');
+        }
+      });
+    }
   </script>
 </body>
 

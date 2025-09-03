@@ -369,7 +369,8 @@
           </div>
 
           <div class="info-text" id="naming-description" style="margin-top: 4px; margin-left: 78px;">
-            Analyzes color values to determine the closest base color, and adds lightness scale and saturation descriptor (e.g., blue-300-vivid, red-500-muted). May require manual updates.
+            Analyzes color values to determine the closest base color, and adds lightness scale and saturation
+            descriptor (e.g., blue-300-vivid, red-500-muted). May require manual updates.
           </div>
 
           <div class="form-group hidden custom-options" id="custom-name-row" style="margin-top: 8px;">
@@ -607,32 +608,6 @@
       document.getElementById('modes-container').style.display = 'none';
     }
 
-    // Handle naming mode toggle
-    document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('naming-mode').addEventListener('change', (event) => {
-        const customNameRow = document.getElementById('custom-name-row');
-        const customNameInput = document.getElementById('custom-name');
-        const descriptionElement = document.getElementById('naming-description');
-        
-        // Update description based on selected option
-        const descriptions = {
-          'auto': 'Analyzes color values to determine the closest base color, and adds lightness scale and saturation descriptor (e.g., blue-300-vivid, red-500-muted). May require manual updates.',
-          'layer-name': 'Uses the name of each color layer as the variable name.',
-          'figma-default': 'Color, Color 2...',
-          'manual': 'Enter a custom name for your variable.'
-        };
-        
-        descriptionElement.textContent = descriptions[event.target.value];
-
-        if (event.target.value === 'manual') {
-          customNameRow.classList.remove('hidden');
-          customNameInput.focus();
-        } else {
-          customNameRow.classList.add('hidden');
-        }
-      });
-    });
-
     document.getElementById('create').onclick = () => {
       const namingMode = document.getElementById('naming-mode').value;
       const customNameInput = document.getElementById('custom-name');
@@ -655,28 +630,28 @@
         customNameLabel.classList.remove('error');
         errorMessage.style.display = 'none';
       }
-        errorMessage.style.display = 'none';
+      errorMessage.style.display = 'none';
+    }
+
+    // Get selected group and mode
+    const selectedGroup = document.getElementById('groups').value;
+    const selectedMode = document.getElementById('modes').value;
+
+    // Check if user wants to create a new group
+    const createNewGroup = selectedGroup === 'create-new-group';
+
+    parent.postMessage({
+      pluginMessage: {
+        type: 'create-variable',
+        collectionId: document.getElementById('collection').value,
+        namingMode: namingMode,
+        customName: customNameInput.value,
+        appendMode: document.querySelector('input[name="append-mode"]:checked')?.value,
+        groupId: createNewGroup ? undefined : (selectedGroup || undefined),
+        modeId: selectedMode || undefined,
+        createNewGroup: createNewGroup
       }
-
-      // Get selected group and mode
-      const selectedGroup = document.getElementById('groups').value;
-      const selectedMode = document.getElementById('modes').value;
-
-      // Check if user wants to create a new group
-      const createNewGroup = selectedGroup === 'create-new-group';
-
-      parent.postMessage({
-        pluginMessage: {
-          type: 'create-variable',
-          collectionId: document.getElementById('collection').value,
-          namingMode: namingMode,
-          customName: customNameInput.value,
-          appendMode: document.querySelector('input[name="append-mode"]:checked')?.value,
-          groupId: createNewGroup ? undefined : (selectedGroup || undefined),
-          modeId: selectedMode || undefined,
-          createNewGroup: createNewGroup
-        }
-      }, '*');
+    }, '*');
     };
 
     // Add input handler to remove error state when user starts typing
@@ -684,6 +659,36 @@
       e.target.classList.remove('error');
       document.querySelector('label[for="custom-name"]').classList.remove('error');
       document.getElementById('name-error').style.display = 'none';
+    });
+
+    // Initialize naming mode description and event listener
+    function updateNamingDescription() {
+      const namingMode = document.getElementById('naming-mode').value;
+      const descriptionElement = document.getElementById('naming-description');
+
+      const descriptions = {
+        'auto': 'Analyzes color values to determine the closest base color, and adds lightness scale and saturation descriptor (e.g., blue-300-vivid, red-500-muted). May require manual updates.',
+        'layer-name': 'Uses the name of each color layer as the variable name.',
+        'figma-default': 'Color, Color 2...',
+        'manual': 'Enter a custom name for your variable.'
+      };
+
+      descriptionElement.textContent = descriptions[namingMode];
+    }
+
+    // Add event listener for naming mode changes
+    document.getElementById('naming-mode').addEventListener('change', function (event) {
+      const customNameRow = document.getElementById('custom-name-row');
+      const customNameInput = document.getElementById('custom-name');
+
+      updateNamingDescription();
+
+      if (event.target.value === 'manual') {
+        customNameRow.classList.remove('hidden');
+        customNameInput.focus();
+      } else {
+        customNameRow.classList.add('hidden');
+      }
     });
   </script>
 </body>

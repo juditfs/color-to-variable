@@ -78,6 +78,31 @@
       box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.1);
     }
 
+    #collection {
+      width: 150px;
+    }
+
+    .collection-form-group,
+    #groups-container,
+    #modes-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .collection-form-group label,
+    #groups-container label,
+    #modes-container label {
+      flex-shrink: 0;
+      width: 70px;
+    }
+
+    #groups,
+    #modes {
+      width: 150px;
+    }
+
     .radio-group {
       display: flex;
       flex-direction: column;
@@ -408,8 +433,8 @@
           <div class="step-heading">Save to</div>
           Choose which collection to save the variable to.
 
-          <div class="form-group">
-            <!-- <label for="collection">Save to</label> -->
+          <div class="collection-form-group">
+            <label for="collection">Collection</label>
             <select id="collection">
               <option value="new">Create new collection</option>
             </select>

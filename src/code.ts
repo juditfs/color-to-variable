@@ -1,7 +1,7 @@
 /// <reference types="@figma/plugin-typings" />
 
 interface PluginMessage {
-  type: 'create-variable' | 'get-collections' | 'get-collection-details' | 'create-group';
+  type: 'create-variable' | 'get-collections' | 'get-collection-details' | 'create-group' | 'ui-ready';
   collectionId?: string;
   namingMode?: 'figma-default' | 'auto' | 'manual' | 'layer-name';
   customName?: string;
@@ -12,6 +12,44 @@ interface PluginMessage {
 }
 
 figma.showUI(__html__, { width: 320, height: 600 });
+
+// Function to extract colors from selected layers
+function extractColorsFromSelection(): string[] {
+  const colorLayers = figma.currentPage.selection.filter(node => {
+    if (node.type === 'RECTANGLE' || node.type === 'ELLIPSE' || node.type === 'POLYGON' || 
+        node.type === 'STAR' || node.type === 'VECTOR' || node.type === 'FRAME' || 
+        node.type === 'COMPONENT' || node.type === 'INSTANCE') {
+      const fills = (node as any).fills;
+      return fills && fills.length > 0 && fills.some((fill: any) => fill.type === 'SOLID');
+    }
+    return false;
+  });
+
+  return colorLayers.map(node => {
+    const fills = (node as any).fills;
+    const solidFill = fills.find((fill: any) => fill.type === 'SOLID');
+    if (solidFill) {
+      const { r, g, b } = solidFill.color;
+      // Convert to hex
+      const toHex = (value: number) => {
+        const hex = Math.round(value * 255).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+      };
+      const hex = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+      return hex;
+    }
+    return null;
+  }).filter(color => color !== null) as string[];
+}
+
+// Handle selection changes
+figma.on('selectionchange', () => {
+  const colors = extractColorsFromSelection();
+  figma.ui.postMessage({
+    type: 'selection-update',
+    colors: colors
+  });
+});
 
 // CSS color palette with expanded color matches
 
@@ -4960,5 +4998,14 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         collection: { id: targetCollection.id, name: targetCollection.name }
       });
     }
+  }
+
+  // Handle UI ready message to send initial color data
+  if (msg.type === 'ui-ready') {
+    const colors = extractColorsFromSelection();
+    figma.ui.postMessage({
+      type: 'selection-update',
+      colors: colors
+    });
   }
 };

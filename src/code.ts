@@ -4961,12 +4961,12 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         }
         variableName = finalName;
       } else if (msg.namingMode === 'layer-name') {
-        // Use the layer's name as the variable name
-        let baseName = sanitizeVariableName(filledNode.name);
+        // Use the layer's name as the variable name without character replacements
+        let baseName = filledNode.name.trim();
 
-        // If sanitization resulted in empty string, show error and fall back
+        // If name is empty after trim, show error and fall back
         if (!baseName) {
-          figma.notify('Layer name contains only invalid characters. Falling back to auto naming.', { error: true });
+          figma.notify('Layer name is empty. Falling back to auto naming.', { error: true });
           baseName = generateHSLColorName(fill.color.r, fill.color.g, fill.color.b, usedNames);
         }
 

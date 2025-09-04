@@ -111,8 +111,7 @@
     .naming-form-group,
     .custom-name-form-group,
     .duplicate-form-group,
-    #groups-container,
-    #modes-container {
+    #groups-container {
       display: flex !important;
       flex-direction: row !important;
       gap: 8px;
@@ -128,7 +127,6 @@
     .custom-name-form-group label,
     .duplicate-form-group label,
     #groups-container label,
-    #modes-container label,
     .dropdown-label {
       flex-shrink: 0;
       width: 70px;
@@ -137,8 +135,7 @@
 
     #collection,
     #naming-mode,
-    #groups,
-    #modes {
+    #groups {
       width: 158px;
     }
 
@@ -638,7 +635,7 @@
         </div>
         <div class="step-content">
           <div class="step-heading">Destination</div>
-          Choose which collection, group and variable mode to save the variable to.
+          Choose which collection and group to save the variable to.
           <div class="collection-form-group" style="margin-top: 12px;">
             <label for="collection" class="dropdown-label">Collection</label>
             <select id="collection">
@@ -651,13 +648,6 @@
             <label for="groups" class="dropdown-label">Group</label>
             <select id="groups">
               <option value="">All Variables</option>
-            </select>
-          </div>
-
-          <!-- Modes dropdown -->
-          <div id="modes-container" style="margin-top: 8px; display: none;">
-            <label for="modes" class="dropdown-label">Mode</label>
-            <select id="modes">
             </select>
           </div>
         </div>
@@ -681,7 +671,7 @@
         // Add the newly created collection to the dropdown and select it
         addNewCollectionToDropdown(msg.collection);
       } else if (msg.type === 'update-collection-details') {
-        updateGroupsAndModes(msg.groups, msg.modes);
+        updateGroups(msg.groups);
       } else if (msg.type === 'group-created') {
         addNewGroupToDropdown(msg.group);
       } else if (msg.type === 'selection-update') {
@@ -765,11 +755,11 @@
       if (hasDefault && defaultCollectionId) {
         requestCollectionDetails(defaultCollectionId);
       } else {
-        // If no collections exist or no default, disable and hide groups/modes
+        // If no collections exist or no default, disable and hide groups
         if (collections.length === 0) {
-          disableGroupsAndModes();
+          disableGroups();
         } else {
-          hideGroupsAndModes();
+          hideGroups();
         }
       }
 
@@ -779,7 +769,7 @@
         if (selectedCollectionId && selectedCollectionId !== 'new') {
           requestCollectionDetails(selectedCollectionId);
         } else {
-          hideGroupsAndModes();
+          hideGroups();
         }
       });
     }
@@ -819,15 +809,12 @@
       }, '*');
     }
 
-    function updateGroupsAndModes(groups, modes) {
+    function updateGroups(groups) {
       const groupsContainer = document.getElementById('groups-container');
-      const modesContainer = document.getElementById('modes-container');
       const groupsSelect = document.getElementById('groups');
-      const modesSelect = document.getElementById('modes');
 
-      // Re-enable the selects (in case they were disabled)
+      // Re-enable the select (in case it was disabled)
       groupsSelect.disabled = false;
-      modesSelect.disabled = false;
 
       // Update groups dropdown
       groupsSelect.innerHTML = '<option value="">All variables</option>';
@@ -844,31 +831,8 @@
       createGroupOption.textContent = 'Create new group';
       groupsSelect.appendChild(createGroupOption);
 
-      // Update modes dropdown
-      modesSelect.innerHTML = '';
-      modes.forEach(mode => {
-        const option = document.createElement('option');
-        option.value = mode.id;
-        option.textContent = mode.name;
-        modesSelect.appendChild(option);
-      });
-
-      // Show the dropdowns if there are groups or modes
       // Always show groups dropdown since we have "Create new group" option
       groupsContainer.style.display = 'block';
-
-      if (modes.length > 0) {
-        modesContainer.style.display = 'block';
-        // Select the first mode by default if available
-        if (modes.length === 1) {
-          modesSelect.value = modes[0].id;
-        }
-      } else {
-        modesContainer.style.display = 'none';
-      }
-
-      // Add event listener to groups dropdown (no immediate action needed)
-      groupsSelect.removeEventListener('change', handleGroupsChange); // Remove existing listener if any
     }
 
     function addNewGroupToDropdown(newGroup) {
@@ -894,28 +858,22 @@
       groupsSelect.appendChild(createGroupOption);
     }
 
-    function hideGroupsAndModes() {
+    function hideGroups() {
       document.getElementById('groups-container').style.display = 'none';
-      document.getElementById('modes-container').style.display = 'none';
     }
 
-    function disableGroupsAndModes() {
+    function disableGroups() {
       const groupsContainer = document.getElementById('groups-container');
-      const modesContainer = document.getElementById('modes-container');
       const groupsSelect = document.getElementById('groups');
-      const modesSelect = document.getElementById('modes');
 
-      // Hide the containers
+      // Hide the container
       groupsContainer.style.display = 'none';
-      modesContainer.style.display = 'none';
 
-      // Disable the selects
+      // Disable the select
       groupsSelect.disabled = true;
-      modesSelect.disabled = true;
 
       // Clear the options
       groupsSelect.innerHTML = '<option value="">No collections available</option>';
-      modesSelect.innerHTML = '<option value="">No collections available</option>';
     }
 
     document.getElementById('create').onclick = () => {
@@ -940,9 +898,8 @@
         errorMessage.style.display = 'none';
       }
 
-      // Get selected group and mode
+      // Get selected group
       const selectedGroup = document.getElementById('groups').value;
-      const selectedMode = document.getElementById('modes').value;
 
       // Check if user wants to create a new group
       const createNewGroup = selectedGroup === 'create-new-group';
@@ -955,7 +912,6 @@
           customName: customNameInput.value,
           appendMode: document.querySelector('input[name="append-mode"]:checked')?.value,
           groupId: createNewGroup ? undefined : (selectedGroup || undefined),
-          modeId: selectedMode || undefined,
           createNewGroup: createNewGroup
         }
       }, '*');

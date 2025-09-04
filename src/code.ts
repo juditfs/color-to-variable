@@ -7,7 +7,6 @@ interface PluginMessage {
   customName?: string;
   appendMode?: 'increment' | 'color';
   groupId?: string;
-  modeId?: string;
   createNewGroup?: boolean;
 }
 
@@ -5004,11 +5003,11 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
           a: fill.opacity || 1
         });
 
-        // Add to created variables list instead of showing individual message
+        // Add to created variables list
         createdVariables.push(variableName);
       } catch (error) {
-        console.error(`Failed to create variable "${variableName}":`, error);
-        figma.notify(`Failed to create variable: ${variableName}`, { error: true });
+        console.error(`Failed to process variable "${variableName}":`, error);
+        figma.notify(`Failed to process variable: ${variableName}`, { error: true });
         // Continue with the next variable instead of stopping
       }
     }

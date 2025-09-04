@@ -4990,21 +4990,27 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       // Add the final name to used names set
       usedNames.add(variableName);
 
-      const variable = await figma.variables.createVariable(
-        variableName,
-        targetCollection.id,
-        'COLOR'
-      );
+      try {
+        const variable = await figma.variables.createVariable(
+          variableName,
+          targetCollection.id,
+          'COLOR'
+        );
 
-      await variable.setValueForMode(targetModeId, {
-        r: fill.color.r,
-        g: fill.color.g,
-        b: fill.color.b,
-        a: fill.opacity || 1
-      });
+        await variable.setValueForMode(targetModeId, {
+          r: fill.color.r,
+          g: fill.color.g,
+          b: fill.color.b,
+          a: fill.opacity || 1
+        });
 
-      // Add to created variables list instead of showing individual message
-      createdVariables.push(variableName);
+        // Add to created variables list instead of showing individual message
+        createdVariables.push(variableName);
+      } catch (error) {
+        console.error(`Failed to create variable "${variableName}":`, error);
+        figma.notify(`Failed to create variable: ${variableName}`, { error: true });
+        // Continue with the next variable instead of stopping
+      }
     }
 
     // At the end, after variables are created, store this collection as last used

@@ -16,9 +16,9 @@ figma.showUI(__html__, { width: 320, height: 600 });
 // Function to extract colors from selected layers
 function extractColorsFromSelection(): string[] {
   const colorLayers = figma.currentPage.selection.filter(node => {
-    if (node.type === 'RECTANGLE' || node.type === 'ELLIPSE' || node.type === 'POLYGON' || 
-        node.type === 'STAR' || node.type === 'VECTOR' || node.type === 'FRAME' || 
-        node.type === 'COMPONENT' || node.type === 'INSTANCE') {
+    if (node.type === 'RECTANGLE' || node.type === 'ELLIPSE' || node.type === 'POLYGON' ||
+      node.type === 'STAR' || node.type === 'VECTOR' || node.type === 'FRAME' ||
+      node.type === 'COMPONENT' || node.type === 'INSTANCE') {
       const fills = (node as any).fills;
       return fills && fills.length > 0 && fills.some((fill: any) => fill.type === 'SOLID');
     }
@@ -39,7 +39,7 @@ function extractColorsFromSelection(): string[] {
       return hex;
     }
     return null;
-  }).filter(color => color !== null) as string[];
+  }).filter(color => color !== null).reverse() as string[];
 }
 
 // Handle selection changes

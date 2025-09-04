@@ -266,6 +266,17 @@
       pointer-events: none;
     }
 
+    .color-swatch-more {
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 500;
+      color: #666;
+      border: 1px solid #d0d0d0;
+    }
+
     .expandable-panel {
       /* border: 1px solid #E5E5E5; */
       border-radius: 4px;
@@ -657,7 +668,7 @@
   <script>
     // Initialize by requesting collections
     parent.postMessage({ pluginMessage: { type: 'get-collections' } }, '*');
-    
+
     // Notify backend that UI is ready to receive color updates
     parent.postMessage({ pluginMessage: { type: 'ui-ready' } }, '*');
 
@@ -680,7 +691,7 @@
 
     function updateColorSwatches(colors) {
       const swatchContainer = document.getElementById('color-swatches');
-      
+
       if (!colors || colors.length === 0) {
         swatchContainer.style.display = 'none';
         swatchContainer.innerHTML = '';
@@ -689,9 +700,14 @@
 
       // Clear existing swatches
       swatchContainer.innerHTML = '';
-      
-      // Add new swatches
-      colors.forEach((color, index) => {
+
+      // Show max 16 swatches
+      const maxSwatches = 16;
+      const displayColors = colors.slice(0, maxSwatches);
+      const remainingCount = colors.length - maxSwatches;
+
+      // Add color swatches
+      displayColors.forEach((color, index) => {
         const swatch = document.createElement('div');
         swatch.className = 'color-swatch';
         swatch.style.backgroundColor = color;
@@ -699,6 +715,15 @@
         swatch.title = `Color ${index + 1}: ${color}`;
         swatchContainer.appendChild(swatch);
       });
+
+      // Add "+n" indicator if there are more colors
+      if (remainingCount > 0) {
+        const indicator = document.createElement('div');
+        indicator.className = 'color-swatch color-swatch-more';
+        indicator.textContent = `+${remainingCount}`;
+        indicator.title = `${remainingCount} more colors`;
+        swatchContainer.appendChild(indicator);
+      }
 
       swatchContainer.style.display = 'flex';
     }

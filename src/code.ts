@@ -4846,11 +4846,20 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
     const usedNames = new Set<string>();
     let textNodeCounter = 1; // Counter for text node based naming
 
-    // Get existing variable names in the collection to avoid duplicates
+    // Get existing variable names in the collection within the same group to avoid duplicates
     const existingVariables = await figma.variables.getLocalVariables();
     for (const variable of existingVariables) {
       if (variable.variableCollectionId === targetCollection.id) {
-        usedNames.add(variable.name); // Add existing names to our tracking set
+        // Extract the group and name parts from the variable
+        const variableParts = variable.name.split('/');
+        const variableGroup = variableParts.length > 1 ? variableParts[0] : '';
+        const variableBaseName = variableParts.length > 1 ? variableParts[1] : variableParts[0];
+        
+        // Only track names within the same group we're creating variables in
+        const currentGroup = actualGroupId || '';
+        if (variableGroup === currentGroup) {
+          usedNames.add(variableBaseName); // Add only the base name for collision detection
+        }
       }
     }
 
@@ -4978,17 +4987,18 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         variableName = generateHSLColorName(fill.color.r, fill.color.g, fill.color.b, usedNames);
       }
 
-      // Apply group prefix if specified
-      if (actualGroupId) {
-        variableName = `${actualGroupId}/${variableName}`;
-      }
-
-      // Add the final name to used names set
+      // Add the base name (without group prefix) to used names set for collision detection
       usedNames.add(variableName);
+
+      // Apply group prefix if specified
+      let fullVariableName = variableName;
+      if (actualGroupId) {
+        fullVariableName = `${actualGroupId}/${variableName}`;
+      }
 
       try {
         const variable = await figma.variables.createVariable(
-          variableName,
+          fullVariableName,
           targetCollection.id,
           'COLOR'
         );
@@ -5001,10 +5011,10 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         });
 
         // Add to created variables list
-        createdVariables.push(variableName);
+        createdVariables.push(fullVariableName);
       } catch (error) {
-        console.error(`Failed to process variable "${variableName}":`, error);
-        figma.notify(`Failed to process variable: ${variableName}`, { error: true });
+        console.error(`Failed to process variable "${fullVariableName}":`, error);
+        figma.notify(`Failed to process variable: ${fullVariableName}`, { error: true });
         // Continue with the next variable instead of stopping
       }
     }

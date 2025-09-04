@@ -4804,9 +4804,6 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       }
     }
 
-    // Show working message
-    figma.notify('Working...');
-
     // Find filled layers and text layers in the selection
     const filledNodes: (SceneNode & { fills: readonly Paint[] })[] = [];
     const textNodes: TextNode[] = [];

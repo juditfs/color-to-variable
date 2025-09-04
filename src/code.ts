@@ -13,9 +13,14 @@ interface PluginMessage {
 
 figma.showUI(__html__, { width: 320, height: 600 });
 
-// Function to extract colors from selected layers
+// Track previous selection to identify newly selected items
+let previousSelection: readonly SceneNode[] = [];
+
+// Function to extract colors from selected layers with smart ordering
 function extractColorsFromSelection(): string[] {
-  const colorLayers = figma.currentPage.selection.filter(node => {
+  const currentSelection = figma.currentPage.selection;
+
+  const colorLayers = currentSelection.filter(node => {
     if (node.type === 'RECTANGLE' || node.type === 'ELLIPSE' || node.type === 'POLYGON' ||
       node.type === 'STAR' || node.type === 'VECTOR' || node.type === 'FRAME' ||
       node.type === 'COMPONENT' || node.type === 'INSTANCE') {
@@ -25,7 +30,29 @@ function extractColorsFromSelection(): string[] {
     return false;
   });
 
-  return colorLayers.map(node => {
+  // Find newly selected items (items in current but not in previous)
+  const newlySelected = colorLayers.filter(node => {
+    for (let i = 0; i < previousSelection.length; i++) {
+      if (previousSelection[i] === node) return false;
+    }
+    return true;
+  });
+
+  // Find previously selected items that are still selected
+  const stillSelected = colorLayers.filter(node => {
+    for (let i = 0; i < previousSelection.length; i++) {
+      if (previousSelection[i] === node) return true;
+    }
+    return false;
+  });
+
+  // Order: newly selected first, then previously selected
+  const orderedLayers = [...newlySelected, ...stillSelected];
+
+  // Update previous selection for next time
+  previousSelection = currentSelection;
+
+  return orderedLayers.map(node => {
     const fills = (node as any).fills;
     const solidFill = fills.find((fill: any) => fill.type === 'SOLID');
     if (solidFill) {
@@ -39,7 +66,7 @@ function extractColorsFromSelection(): string[] {
       return hex;
     }
     return null;
-  }).filter(color => color !== null).reverse() as string[];
+  }).filter(color => color !== null) as string[];
 }
 
 // Handle selection changes

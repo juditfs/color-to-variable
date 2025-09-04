@@ -4734,12 +4734,12 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       });
 
       // Generate new group name
-      let groupName = 'New group';
+      let groupName = 'Group';
       let counter = 1;
 
       while (existingGroups.has(groupName)) {
         counter++;
-        groupName = `New group ${counter}`;
+        groupName = `Group ${counter}`;
       }
 
       // Send the new group back to the UI
@@ -4787,12 +4787,12 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         });
 
         // Generate new group name
-        let groupName = 'New group';
+        let groupName = 'Group';
         let counter = 1;
 
         while (existingGroups.has(groupName)) {
           counter++;
-          groupName = `New group ${counter}`;
+          groupName = `Group ${counter}`;
         }
 
         actualGroupId = groupName;

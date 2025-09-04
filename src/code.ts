@@ -4527,7 +4527,7 @@ function getAncestors(node: BaseNode): BaseNode[] {
 
 // Helper function to generate unique collection name
 async function generateUniqueCollectionName(): Promise<string> {
-  const existingCollections = await figma.variables.getLocalVariableCollections();
+  const existingCollections = await figma.variables.getLocalVariableCollectionsAsync();
   const baseName = "Colors";
 
   // Check if base name is available
@@ -4613,7 +4613,7 @@ function generateHSLColorName(r: number, g: number, b: number, usedNames: Set<st
 
 figma.ui.onmessage = async (msg: PluginMessage) => {
   if (msg.type === 'get-collections') {
-    const collections = await figma.variables.getLocalVariableCollections();
+    const collections = await figma.variables.getLocalVariableCollectionsAsync();
 
     // Get the last used collection from plugin data
     let defaultCollectionId = figma.root.getPluginData('lastUsedCollection');
@@ -4622,7 +4622,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
     if (!defaultCollectionId || !collections.find(c => c.id === defaultCollectionId)) {
       if (collections.length > 0) {
         // Find collection with most variables as proxy for most recently used
-        const allVariables = await figma.variables.getLocalVariables();
+        const allVariables = await figma.variables.getLocalVariablesAsync();
         let mostActiveCollection = collections[0];
         let maxVariableCount = 0;
 
@@ -4668,7 +4668,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       }
 
       // Get groups (variable groups in the collection)
-      const allVariables = await figma.variables.getLocalVariables();
+      const allVariables = await figma.variables.getLocalVariablesAsync();
       const collectionVariables = allVariables.filter(v => v.variableCollectionId === msg.collectionId);
 
       // Extract unique groups from variable names (assuming group structure like "colors/primary" or "spacing/small")
@@ -4722,7 +4722,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
 
     try {
       // Get existing groups to determine next number
-      const allVariables = await figma.variables.getLocalVariables();
+      const allVariables = await figma.variables.getLocalVariablesAsync();
       const collectionVariables = allVariables.filter(v => v.variableCollectionId === msg.collectionId);
 
       const existingGroups = new Set<string>();
@@ -4775,7 +4775,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
     if (msg.createNewGroup && msg.collectionId && msg.collectionId !== 'new') {
       try {
         // Get existing groups to determine next number
-        const allVariables = await figma.variables.getLocalVariables();
+        const allVariables = await figma.variables.getLocalVariablesAsync();
         const collectionVariables = allVariables.filter(v => v.variableCollectionId === msg.collectionId);
 
         const existingGroups = new Set<string>();
@@ -4836,7 +4836,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       targetCollection = await figma.variables.createVariableCollection(collectionName);
       isNewCollection = true;
     } else {
-      const collections = await figma.variables.getLocalVariableCollections();
+      const collections = await figma.variables.getLocalVariableCollectionsAsync();
       targetCollection = collections.find(c => c.id === msg.collectionId);
       if (!targetCollection) {
         const collectionName = await generateUniqueCollectionName();
@@ -4854,7 +4854,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
     let textNodeCounter = 1; // Counter for text node based naming
 
     // Get existing variable names in the collection within the same group to avoid duplicates
-    const existingVariables = await figma.variables.getLocalVariables();
+    const existingVariables = await figma.variables.getLocalVariablesAsync();
     for (const variable of existingVariables) {
       if (variable.variableCollectionId === targetCollection.id) {
         // Extract the group and name parts from the variable
@@ -5006,7 +5006,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
       try {
         const variable = await figma.variables.createVariable(
           fullVariableName,
-          targetCollection.id,
+          targetCollection,
           'COLOR'
         );
 

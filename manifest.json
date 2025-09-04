@@ -1,10 +1,11 @@
 {
   "name": "Easy Color Variables",
-  "id": "easy-color-varaibles",
+  "id": "1545391202805303543",
   "api": "1.0.0",
   "main": "dist/code.js",
   "ui": "src/ui.html",
   "editorType": [
     "figma"
-  ]
+  ],
+  "documentAccess": "dynamic-page"
 }

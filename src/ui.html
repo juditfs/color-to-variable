@@ -92,12 +92,19 @@
       box-shadow: 0 0 0 2px rgba(24, 160, 251, 0.1);
     }
 
+    select:disabled {
+      background-color: #f5f5f5;
+      color: #999;
+      cursor: not-allowed;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 6"><path fill="none" stroke="%23999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2 2l3 3 3-3"/></svg>');
+    }
+
     #collection {
-      width: 150px;
+      width: 158px;
     }
 
     #custom-name {
-      width: 150px;
+      width: 158px;
     }
 
     .collection-form-group,
@@ -132,7 +139,7 @@
     #naming-mode,
     #groups,
     #modes {
-      width: 150px;
+      width: 158px;
     }
 
     .radio-group {
@@ -187,8 +194,8 @@
     }
 
     .info-text {
-      font-size: 11px;
-      color: #666;
+      font-size: 10px;
+      color: #000;
       line-height: 1.4;
       /* margin-top: 2px; */
       /* background: #F0
@@ -502,14 +509,14 @@
               <div class="info-icon-container" id="info-icon-container" style="display: none;">
                 <span class="info-icon" id="info-icon">ⓘ</span>
                 <div class="tooltip" id="tooltip">
-                  <strong>How Best Guess Works:</strong><br><br>
+                  <!-- <strong>How Best Guess Works:</strong><br><br> -->
                   • Analyzes HSL values to find the closest base color<br>
                   • Maps lightness to a scale (100-900)<br>
                   • Adds saturation descriptors (vivid, muted, etc.)<br><br>
                   <strong>Examples:</strong><br>
                   Light blue → blue-300-vivid<br>
                   Dark red → red-700-muted<br><br>
-                  <em>Note: May require manual adjustments for accuracy</em>
+                  <em>Note: May require manual adjustments</em>
                 </div>
               </div>
               <div class="info-icon-container" id="figma-info-icon-container" style="display: none;">
@@ -635,6 +642,13 @@
       // Request collection details for the selected collection
       if (hasDefault && defaultCollectionId) {
         requestCollectionDetails(defaultCollectionId);
+      } else {
+        // If no collections exist or no default, disable and hide groups/modes
+        if (collections.length === 0) {
+          disableGroupsAndModes();
+        } else {
+          hideGroupsAndModes();
+        }
       }
 
       // Add change event listener to collection dropdown
@@ -688,6 +702,10 @@
       const modesContainer = document.getElementById('modes-container');
       const groupsSelect = document.getElementById('groups');
       const modesSelect = document.getElementById('modes');
+
+      // Re-enable the selects (in case they were disabled)
+      groupsSelect.disabled = false;
+      modesSelect.disabled = false;
 
       // Update groups dropdown
       groupsSelect.innerHTML = '<option value="">All variables</option>';
@@ -757,6 +775,25 @@
     function hideGroupsAndModes() {
       document.getElementById('groups-container').style.display = 'none';
       document.getElementById('modes-container').style.display = 'none';
+    }
+
+    function disableGroupsAndModes() {
+      const groupsContainer = document.getElementById('groups-container');
+      const modesContainer = document.getElementById('modes-container');
+      const groupsSelect = document.getElementById('groups');
+      const modesSelect = document.getElementById('modes');
+
+      // Hide the containers
+      groupsContainer.style.display = 'none';
+      modesContainer.style.display = 'none';
+
+      // Disable the selects
+      groupsSelect.disabled = true;
+      modesSelect.disabled = true;
+
+      // Clear the options
+      groupsSelect.innerHTML = '<option value="">No collections available</option>';
+      modesSelect.innerHTML = '<option value="">No collections available</option>';
     }
 
     document.getElementById('create').onclick = () => {

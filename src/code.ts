@@ -4798,6 +4798,13 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         actualGroupId = groupName;
         figma.notify(`Created group: ${groupName}`);
 
+        // Send the new group to the UI to update the dropdown
+        figma.ui.postMessage({
+          type: 'group-created',
+          group: { id: groupName, name: groupName },
+          collectionId: msg.collectionId
+        });
+
       } catch (error) {
         figma.notify('Failed to create group, using default placement');
         actualGroupId = undefined;
@@ -4854,7 +4861,7 @@ figma.ui.onmessage = async (msg: PluginMessage) => {
         const variableParts = variable.name.split('/');
         const variableGroup = variableParts.length > 1 ? variableParts[0] : '';
         const variableBaseName = variableParts.length > 1 ? variableParts[1] : variableParts[0];
-        
+
         // Only track names within the same group we're creating variables in
         const currentGroup = actualGroupId || '';
         if (variableGroup === currentGroup) {
